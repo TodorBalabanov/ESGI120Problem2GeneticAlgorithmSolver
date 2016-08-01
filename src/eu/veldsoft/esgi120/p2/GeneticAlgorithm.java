@@ -207,7 +207,7 @@ class GeneticAlgorithm {
 			 */
 			y = 0;
 			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
-				if (y < level[dx]) {
+				if (dx < width && y < level[dx]) {
 					y = level[dx];
 				}
 			}
@@ -219,10 +219,12 @@ class GeneticAlgorithm {
 			piece.setY(y);
 
 			/*
-			 * Move lines for next placment.
+			 * Move lines for next placement.
 			 */
 			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
-				level[dx] = y + piece.getHeight();
+				if (dx < width) {
+					level[dx] = y + piece.getHeight();
+				}
 			}
 			x += piece.getWidth();
 		}

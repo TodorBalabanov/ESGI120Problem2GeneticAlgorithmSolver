@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Vector;
 
 public class Main {
-	private static final long NUMBER_OF_NEW_INDIVIDUALS = 100000;
+	private static final long NUMBER_OF_NEW_INDIVIDUALS = 1_000_000;
 
 	public static void main(String[] args) {
 		Object data[] = Util.readInputByCoordinates();
