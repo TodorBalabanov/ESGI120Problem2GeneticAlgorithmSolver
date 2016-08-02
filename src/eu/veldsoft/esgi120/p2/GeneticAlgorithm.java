@@ -19,39 +19,15 @@ class GeneticAlgorithm {
 				continue;
 			}
 
-			if (!(piece.getX() >= (current.getX() + current.getWidth())
-					|| current.getX() >= (piece.getX() + piece.getWidth())
-					|| piece.getY() >= (current.getY() + current.getHeight()) || current
-					.getY() >= (piece.getY() + piece.getHeight()))) {
-				return true;
-			}
+//			if (!(piece.getX() >= (current.getX() + current.getWidth())
+//					|| current.getX() >= (piece.getX() + piece.getWidth())
+//					|| piece.getY() >= (current.getY() + current.getHeight()) || current
+//					.getY() >= (piece.getY() + piece.getHeight()))) {
+//				return true;
+//			}
 		}
 
 		return false;
-	}
-
-	private void allLandscape(Vector<Piece> pieces) {
-		/*
-		 * Rotate all pieces.
-		 */
-		for (Piece piece : pieces) {
-			if (piece.getWidth() < piece.getHeight()) {
-				piece.turn();
-			}
-		}
-
-	}
-
-	private void allPortrait(Vector<Piece> pieces) {
-		/*
-		 * Rotate all pieces.
-		 */
-		for (Piece piece : pieces) {
-			if (piece.getWidth() > piece.getHeight()) {
-				piece.turn();
-			}
-		}
-
 	}
 
 	GeneticAlgorithm(int populationSize, Vector<Piece> pieces) {
@@ -76,10 +52,10 @@ class GeneticAlgorithm {
 				/* Unchanged. */
 				break;
 			case 1:
-				allLandscape(chromosome);
+				//allLandscape(chromosome);
 				break;
 			case 2:
-				allPortrait(chromosome);
+				//allPortrait(chromosome);
 				break;
 			}
 
@@ -177,13 +153,13 @@ class GeneticAlgorithm {
 		Vector<Piece> result = population.get(worstIndex);
 
 		for (Piece piece : result) {
-			while (piece.getX() < 0
-					|| (piece.getX() + piece.getWidth()) >= width
-					|| piece.getY() < 0
-					|| (piece.getY() + piece.getHeight()) >= height
+			while (piece.getMinX() < 0
+					|| piece.getMaxX() >= width
+					|| piece.getMinY() < 0
+					|| piece.getMaxY() + piece.getHeight() >= height
 					|| overlap(piece) == true) {
-				piece.setX(Util.PRNG.nextInt(width - piece.getWidth()));
-				piece.setY(Util.PRNG.nextInt(height - piece.getHeight()));
+				piece.moveX(Util.PRNG.nextInt(width - piece.getWidth()));
+				piece.moveY(Util.PRNG.nextInt(height - piece.getHeight()));
 			}
 		}
 	}
@@ -198,35 +174,35 @@ class GeneticAlgorithm {
 		int y = 0;
 		Vector<Piece> result = population.get(worstIndex);
 		for (Piece piece : result) {
-			if (x + piece.getWidth() >= width) {
-				x = 0;
-			}
-
-			/*
-			 * Find y offset for current piece.
-			 */
-			y = 0;
-			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
-				if (dx < width && y < level[dx]) {
-					y = level[dx];
-				}
-			}
-
-			/*
-			 * Set current piece coordinates.
-			 */
-			piece.setX(x);
-			piece.setY(y);
-
-			/*
-			 * Move lines for next placement.
-			 */
-			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
-				if (dx < width) {
-					level[dx] = y + piece.getHeight();
-				}
-			}
-			x += piece.getWidth();
+//			if (x + piece.getWidth() >= width) {
+//				x = 0;
+//			}
+//
+//			/*
+//			 * Find y offset for current piece.
+//			 */
+//			y = 0;
+//			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
+//				if (dx < width && y < level[dx]) {
+//					y = level[dx];
+//				}
+//			}
+//
+//			/*
+//			 * Set current piece coordinates.
+//			 */
+//			piece.setX(x);
+//			piece.setY(y);
+//
+//			/*
+//			 * Move lines for next placement.
+//			 */
+//			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
+//				if (dx < width) {
+//					level[dx] = y + piece.getHeight();
+//				}
+//			}
+//			x += piece.getWidth();
 		}
 	}
 
@@ -238,8 +214,8 @@ class GeneticAlgorithm {
 		 */
 		double length = 0.0;
 		for (Piece piece : result) {
-			if (length < piece.getY() + piece.getHeight()) {
-				length = piece.getY() + piece.getHeight();
+			if (length < piece.maxY()) {
+				length = piece.maxY();
 			}
 		}
 

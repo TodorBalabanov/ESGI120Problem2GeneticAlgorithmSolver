@@ -4,11 +4,10 @@ import java.util.Date;
 import java.util.Vector;
 
 public class Main {
-	private static final long NUMBER_OF_NEW_INDIVIDUALS = 10_000_000;
+	private static final long NUMBER_OF_NEW_INDIVIDUALS = 10;// _000_000;
 
 	public static void main(String[] args) {
 		Object data[] = Util.readInputByCoordinates();
-		// Object data[] = Util.readInputByAmount();
 
 		Vector<Piece> pieces = (Vector<Piece>) data[0];
 		int X = (Integer) data[1];

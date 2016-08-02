@@ -1,23 +1,51 @@
 package eu.veldsoft.esgi120.p2;
 
-class Piece implements Cloneable {
-	private int id;
-	private int x;
-	private int y;
-	private int width;
-	private int height;
-	private Orientation orientation;
+import java.awt.Polygon;
 
+class Piece implements Cloneable {
+	/**
+	 * It is used for generation of unique object identifiers.
+	 */
 	private static int counter = 0;
 
+	/**
+	 * Object identifier.
+	 */
+	private int id;
+
+	/**
+	 * Piece polygon coordinates.
+	 */
+	private Polygon polygon = new Polygon();
+
+	/**
+	 * Piece orientation as radians.
+	 */
+	private double orientation;
+
+	private int minX;
+
+	private int maxX;
+
+	private int minY;
+
+	private int maxY;
+
+	private void updateDimensions() {
+		minX = minX();
+		maxX = maxX();
+		minY = minY();
+		maxY = maxY();
+	}
+	
 	@Override
 	protected Object clone() {
 		Piece piece = new Piece();
+
 		piece.id = id;
-		piece.x = x;
-		piece.y = y;
-		piece.width = width;
-		piece.height = height;
+		piece.polygon = new Polygon(polygon.xpoints, polygon.ypoints,
+				polygon.npoints);
+		updateDimensions();
 		piece.orientation = orientation;
 
 		return piece;
@@ -26,78 +54,137 @@ class Piece implements Cloneable {
 	private Piece() {
 	}
 
-	Piece(int x, int y, int width, int height) {
+	Piece(int polygon[][]) {
 		super();
 
 		counter++;
 		id = counter;
 
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-
-		if (width < height) {
-			orientation = Orientation.PORTRAIT;
-		} else {
-			orientation = Orientation.LANDSCAPE;
+		this.polygon = new Polygon();
+		for (int[] coordinates : polygon) {
+			this.polygon.addPoint(coordinates[0], coordinates[1]);
 		}
+		updateDimensions();
+
+		orientation = 0;
 	}
 
-	int getX() {
-		return x;
+	/**
+	 * @return the points
+	 */
+	public Polygon getPoints() {
+		// TODO Do a deep copy.
+		return polygon;
 	}
 
-	void setX(int x) {
-		this.x = x;
+	/**
+	 * @param points
+	 *            the points to set
+	 */
+	public void setPoints(int polygon[][]) {
+		this.polygon = new Polygon();
+		for (int[] coordinates : polygon) {
+			this.polygon.addPoint(coordinates[0], coordinates[1]);
+		}
+		updateDimensions();
 	}
 
-	int getY() {
-		return y;
-	}
-
-	void setY(int y) {
-		this.y = y;
-	}
-
-	int getWidth() {
-		return width;
-	}
-
-	void setWidth(int width) {
-		this.width = width;
-	}
-
-	int getHeight() {
-		return height;
-	}
-
-	void setHeight(int height) {
-		this.height = height;
-	}
-
-	Orientation getOrientation() {
+	double getOrientation() {
 		return orientation;
 	}
 
-	void setOrientation(Orientation orientation) {
+	void setOrientation(double orientation) {
 		this.orientation = orientation;
 	}
 
+	int getMinX() {
+		return minX;
+	}
+
+	int getMaxX() {
+		return maxX;
+	}
+
+	int getMinY() {
+		return minY;
+	}
+
+	int getMaxY() {
+		return maxY;
+	}
+
+	int getWidth() {
+		return maxX - minX;
+	}
+
+	int getHeight() {
+		return maxY - minY;
+	}
+	
+	int minX() {
+		// TODO Store value, do not calculate it.
+		int min = polygon.xpoints[0];
+		for(int x : polygon.xpoints) {
+			if(x < min) {
+				min = x;
+			}
+		}
+		
+		return min;
+	}
+
+	int maxX() {
+		// TODO Store value, do not calculate it.
+		int max = polygon.xpoints[0];
+		for(int x : polygon.xpoints) {
+			if(x > max) {
+				max = x;
+			}
+		}
+		
+		return max;
+	}
+
+	int minY() {
+		// TODO Store value, do not calculate it.
+		int min = polygon.ypoints[0];
+		for(int y : polygon.ypoints) {
+			if(y < min) {
+				min = y;
+			}
+		}
+		
+		return min;
+	}
+
+	int maxY() {
+		// TODO Store value, do not calculate it.
+		int max = polygon.ypoints[0];
+		for(int y : polygon.ypoints) {
+			if(y > max) {
+				max = y;
+			}
+		}
+		
+		return max;
+	}
+
 	void turn() {
-		orientation = orientation.opposite();
+		// TODO orientation = orientation.opposite();
+	}
 
-		if (orientation == Orientation.LANDSCAPE && width < height) {
-			int value = width;
-			width = height;
-			height = value;
+	public void moveX(int dx) {
+		for(int i=0; i<polygon.xpoints.length; i++) {
+			polygon.xpoints[i] += dx;
 		}
+		updateDimensions();
+	}
 
-		if (orientation == Orientation.PORTRAIT && width > height) {
-			int value = width;
-			width = height;
-			height = value;
+	public void moveY(int dy) {
+		for(int j=0; j<polygon.ypoints.length; j++) {
+			polygon.ypoints[j] += dy;
 		}
+		updateDimensions();
 	}
 
 	@Override

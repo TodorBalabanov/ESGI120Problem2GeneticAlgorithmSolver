@@ -15,54 +15,6 @@ class Util {
 
 	static final Random PRNG = new Random();
 
-	static Object[] readInputByAmount() {
-		int n;
-		int X;
-		int Y;
-		Vector<Piece> pieces = new Vector<Piece>();
-
-		Scanner in = new Scanner(System.in);
-		if (in.hasNextInt() == false) {
-			throw new RuntimeException(
-					"First number should be number of pieces.");
-		}
-		n = in.nextInt();
-
-		if (in.hasNextInt() == false) {
-			throw new RuntimeException(
-					"Second number should be width of the sheet.");
-		}
-		X = in.nextInt();
-
-		if (in.hasNextInt() == false) {
-			throw new RuntimeException(
-					"Third number should be width of the sheet.");
-		}
-		Y = in.nextInt();
-
-		for (int i = 0, h = 3, w, k; i < n; i++) {
-			if (in.hasNextInt() == false) {
-				throw new RuntimeException(
-						"Next number should be number of a pieces.");
-			}
-			k = in.nextInt();
-			if (in.hasNextInt() == false) {
-				throw new RuntimeException(
-						"Next number should be width of a piece.");
-			}
-			w = in.nextInt();
-
-			for (int l = 0; l < k; l++) {
-				pieces.add(new Piece(Util.PRNG.nextInt(X - w), Util.PRNG
-						.nextInt(Y - h), w, h));
-			}
-		}
-		in.close();
-
-		Object[] result = { pieces, new Integer(X), new Integer(Y) };
-		return result;
-	}
-
 	static Object[] readInputByCoordinates() {
 		int n;
 		int X;
@@ -84,24 +36,23 @@ class Util {
 
 		if (in.hasNextInt() == false) {
 			throw new RuntimeException(
-					"Third number should be width of the sheet.");
+					"Third number should be height of the sheet.");
 		}
 		Y = in.nextInt();
 
-		for (int i = 0, w, h; i < n; i++) {
-			if (in.hasNextInt() == false) {
-				throw new RuntimeException(
-						"Next number should be width of a piece.");
-			}
-			w = in.nextInt();
-			if (in.hasNextInt() == false) {
-				throw new RuntimeException(
-						"Next number should be width of a piece.");
-			}
-			h = in.nextInt();
+		String line = "";
+		while (in.hasNextLine() == true) {
+			line = in.nextLine().trim();
+			String values[] = line.split("\\s+");
 
-			pieces.add(new Piece(Util.PRNG.nextInt(X - w), Util.PRNG.nextInt(Y
-					- h), w, h));
+			int coordinates[][] = new int[values.length / 2][2];
+			for (int i = 0, j = 0; i < coordinates.length; i++) {
+				// TODO Exception handling for string to integer transformation.
+				coordinates[i][0] = Integer.valueOf(values[j++]);
+				coordinates[i][1] = Integer.valueOf(values[j++]);
+			}
+
+			pieces.add(new Piece(coordinates));
 		}
 		in.close();
 
@@ -147,12 +98,10 @@ class Util {
 				g.setColor(Color.pink);
 				break;
 			}
-			g.fillRect(piece.getX(), piece.getY(), piece.getWidth(),
-					piece.getHeight());
+			g.fillPolygon(piece.getPoints());
 
 			g.setColor(Color.black);
-			g.drawRect(piece.getX(), piece.getY(), piece.getWidth(),
-					piece.getHeight());
+			g.drawPolygon(piece.getPoints());
 		}
 
 		try {
