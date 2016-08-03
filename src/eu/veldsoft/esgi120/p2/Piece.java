@@ -32,12 +32,17 @@ class Piece implements Cloneable {
 	private int maxY;
 
 	private void updateDimensions() {
+		if (polygon.xpoints == null || polygon.ypoints == null
+				|| polygon.xpoints.length <= 0 || polygon.ypoints.length <= 0) {
+			return;
+		}
+
 		minX = minX();
 		maxX = maxX();
 		minY = minY();
 		maxY = maxY();
 	}
-	
+
 	@Override
 	protected Object clone() {
 		Piece piece = new Piece();
@@ -45,13 +50,61 @@ class Piece implements Cloneable {
 		piece.id = id;
 		piece.polygon = new Polygon(polygon.xpoints, polygon.ypoints,
 				polygon.npoints);
-		updateDimensions();
+		piece.updateDimensions();
 		piece.orientation = orientation;
 
 		return piece;
 	}
 
 	private Piece() {
+	}
+
+	private int minX() {
+		// TODO Store value, do not calculate it.
+		int min = polygon.xpoints[0];
+		for (int x : polygon.xpoints) {
+			if (x < min) {
+				min = x;
+			}
+		}
+
+		return min;
+	}
+
+	private int maxX() {
+		// TODO Store value, do not calculate it.
+		int max = polygon.xpoints[0];
+		for (int x : polygon.xpoints) {
+			if (x > max) {
+				max = x;
+			}
+		}
+
+		return max;
+	}
+
+	private int minY() {
+		// TODO Store value, do not calculate it.
+		int min = polygon.ypoints[0];
+		for (int y : polygon.ypoints) {
+			if (y < min) {
+				min = y;
+			}
+		}
+
+		return min;
+	}
+
+	private int maxY() {
+		// TODO Store value, do not calculate it.
+		int max = polygon.ypoints[0];
+		for (int y : polygon.ypoints) {
+			if (y > max) {
+				max = y;
+			}
+		}
+
+		return max;
 	}
 
 	Piece(int polygon[][]) {
@@ -120,68 +173,20 @@ class Piece implements Cloneable {
 	int getHeight() {
 		return maxY - minY;
 	}
-	
-	int minX() {
-		// TODO Store value, do not calculate it.
-		int min = polygon.xpoints[0];
-		for(int x : polygon.xpoints) {
-			if(x < min) {
-				min = x;
-			}
-		}
-		
-		return min;
-	}
-
-	int maxX() {
-		// TODO Store value, do not calculate it.
-		int max = polygon.xpoints[0];
-		for(int x : polygon.xpoints) {
-			if(x > max) {
-				max = x;
-			}
-		}
-		
-		return max;
-	}
-
-	int minY() {
-		// TODO Store value, do not calculate it.
-		int min = polygon.ypoints[0];
-		for(int y : polygon.ypoints) {
-			if(y < min) {
-				min = y;
-			}
-		}
-		
-		return min;
-	}
-
-	int maxY() {
-		// TODO Store value, do not calculate it.
-		int max = polygon.ypoints[0];
-		for(int y : polygon.ypoints) {
-			if(y > max) {
-				max = y;
-			}
-		}
-		
-		return max;
-	}
 
 	void turn() {
 		// TODO orientation = orientation.opposite();
 	}
 
 	public void moveX(int dx) {
-		for(int i=0; i<polygon.xpoints.length; i++) {
+		for (int i = 0; i < polygon.xpoints.length; i++) {
 			polygon.xpoints[i] += dx;
 		}
 		updateDimensions();
 	}
 
 	public void moveY(int dy) {
-		for(int j=0; j<polygon.ypoints.length; j++) {
+		for (int j = 0; j < polygon.ypoints.length; j++) {
 			polygon.ypoints[j] += dy;
 		}
 		updateDimensions();
