@@ -1,6 +1,8 @@
 package eu.veldsoft.esgi120.p2;
 
 import java.awt.Polygon;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 
 class Piece implements Cloneable {
 	/**
@@ -17,11 +19,11 @@ class Piece implements Cloneable {
 	 * Piece polygon coordinates.
 	 */
 	private Polygon polygon = new Polygon();
-
+	
 	/**
-	 * Piece orientation as radians.
+	 * Piece as area object.
 	 */
-	private double orientation;
+	private Area area = new Area();
 
 	private int minX;
 
@@ -31,7 +33,7 @@ class Piece implements Cloneable {
 
 	private int maxY;
 
-	private void updateDimensions() {
+	private void updateInternalDataStructure() {
 		if (polygon.xpoints == null || polygon.ypoints == null
 				|| polygon.xpoints.length <= 0 || polygon.ypoints.length <= 0) {
 			return;
@@ -41,6 +43,8 @@ class Piece implements Cloneable {
 		maxX = maxX();
 		minY = minY();
 		maxY = maxY();
+		
+		area = new Area(polygon);
 	}
 
 	@Override
@@ -50,8 +54,7 @@ class Piece implements Cloneable {
 		piece.id = id;
 		piece.polygon = new Polygon(polygon.xpoints, polygon.ypoints,
 				polygon.npoints);
-		piece.updateDimensions();
-		piece.orientation = orientation;
+		piece.updateInternalDataStructure();
 
 		return piece;
 	}
@@ -117,17 +120,23 @@ class Piece implements Cloneable {
 		for (int[] coordinates : polygon) {
 			this.polygon.addPoint(coordinates[0], coordinates[1]);
 		}
-		updateDimensions();
-
-		orientation = 0;
+		updateInternalDataStructure();
 	}
 
 	/**
-	 * @return the points
+	 * @return Piece as polygon object.
 	 */
-	public Polygon getPoints() {
+	public Polygon getPolygon() {
 		// TODO Do a deep copy.
 		return polygon;
+	}
+
+	/**
+	 * @return Piece as area object.
+	 */
+	public Area getArea() {
+		// TODO Do a deep copy.
+		return area;
 	}
 
 	/**
@@ -139,15 +148,7 @@ class Piece implements Cloneable {
 		for (int[] coordinates : polygon) {
 			this.polygon.addPoint(coordinates[0], coordinates[1]);
 		}
-		updateDimensions();
-	}
-
-	double getOrientation() {
-		return orientation;
-	}
-
-	void setOrientation(double orientation) {
-		this.orientation = orientation;
+		updateInternalDataStructure();
 	}
 
 	int getMinX() {
@@ -174,22 +175,52 @@ class Piece implements Cloneable {
 		return maxY - minY;
 	}
 
-	void turn() {
-		// TODO orientation = orientation.opposite();
+	/**
+	 * Rotate the piece on specified angle.
+	 * 
+	 * @param dr Angle of rotation.
+	 */
+	void turn(double dr) {
+		/*
+		 * Transform parallel arrays in a single array.
+		 */
+		double source[] = new double[polygon.npoints * 2];
+		double destination[] = new double[polygon.npoints * 2];
+		for(int k=0, l=0; k<polygon.npoints; k++){
+			source[l++] = polygon.xpoints[k];
+			source[l++] = polygon.ypoints[k];
+		}
+		
+		/*
+		 * Rotate according piece center.
+		 */
+		AffineTransform.getRotateInstance(dr, (maxX + minX) / 2D,
+				(maxY + minY) / 2D).transform(source, 0, destination, 0,
+				polygon.npoints);
+
+		/*
+		 * Transform the single array in parallel arrays.
+		 */
+		for(int k=0, l=0; k<polygon.npoints; k++){
+			polygon.xpoints[k] = (int)Math.round(destination[l++]);
+			polygon.ypoints[k] = (int)Math.round(destination[l++]);
+		}
+
+		updateInternalDataStructure();
 	}
 
 	public void moveX(int dx) {
 		for (int i = 0; i < polygon.xpoints.length; i++) {
 			polygon.xpoints[i] += dx;
 		}
-		updateDimensions();
+		updateInternalDataStructure();
 	}
 
 	public void moveY(int dy) {
 		for (int j = 0; j < polygon.ypoints.length; j++) {
 			polygon.ypoints[j] += dy;
 		}
-		updateDimensions();
+		updateInternalDataStructure();
 	}
 
 	@Override

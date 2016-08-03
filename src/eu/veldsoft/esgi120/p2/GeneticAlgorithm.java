@@ -1,5 +1,6 @@
 package eu.veldsoft.esgi120.p2;
 
+import java.awt.geom.Area;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -19,13 +20,14 @@ class GeneticAlgorithm {
 				continue;
 			}
 
-			// if (!(piece.getX() >= (current.getX() + current.getWidth())
-			// || current.getX() >= (piece.getX() + piece.getWidth())
-			// || piece.getY() >= (current.getY() + current.getHeight()) ||
-			// current
-			// .getY() >= (piece.getY() + piece.getHeight()))) {
-			// return true;
-			// }
+			/*
+			 * Check for polygons overlapping.
+			 */
+			Area area = (Area) current.getArea().clone();
+			area.intersect(piece.getArea());
+			if (area.isEmpty() == false) {
+				return true;
+			}
 		}
 
 		return false;
@@ -53,10 +55,10 @@ class GeneticAlgorithm {
 				/* Unchanged. */
 				break;
 			case 1:
-				// allLandscape(chromosome);
+				// TODO allLandscape(chromosome);
 				break;
 			case 2:
-				// allPortrait(chromosome);
+				// TODO allPortrait(chromosome);
 				break;
 			}
 
@@ -136,8 +138,9 @@ class GeneticAlgorithm {
 
 		Piece piece = result.elementAt(Util.PRNG.nextInt(result.size()));
 
+		// TODO Find better way to select random angle.
 		if (Util.PRNG.nextBoolean() == true) {
-			piece.turn();
+			piece.turn(Util.PRNG.nextDouble() * Math.PI / 8);
 		}
 
 		if (Util.PRNG.nextBoolean() == true) {
@@ -164,6 +167,7 @@ class GeneticAlgorithm {
 		}
 	}
 
+	// TODO Pack polygons not surrounding rectangle.
 	public void pack(int width, int height) {
 		int level[] = new int[width];
 		for (int i = 0; i < level.length; i++) {
@@ -174,35 +178,36 @@ class GeneticAlgorithm {
 		int y = 0;
 		Vector<Piece> result = population.get(worstIndex);
 		for (Piece piece : result) {
-			// if (x + piece.getWidth() >= width) {
-			// x = 0;
-			// }
-			//
-			// /*
-			// * Find y offset for current piece.
-			// */
-			// y = 0;
-			// for (int dx = x; dx < (x + piece.getWidth()); dx++) {
-			// if (dx < width && y < level[dx]) {
-			// y = level[dx];
-			// }
-			// }
-			//
-			// /*
-			// * Set current piece coordinates.
-			// */
-			// piece.setX(x);
-			// piece.setY(y);
-			//
-			// /*
-			// * Move lines for next placement.
-			// */
-			// for (int dx = x; dx < (x + piece.getWidth()); dx++) {
-			// if (dx < width) {
-			// level[dx] = y + piece.getHeight();
-			// }
-			// }
-			// x += piece.getWidth();
+			if (x + piece.getWidth() >= width) {
+				x = 0;
+			}
+
+			/*
+			 * Find y offset for current piece.
+			 */
+			y = 0;
+			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
+				if (dx < width && y < level[dx]) {
+					y = level[dx];
+				}
+			}
+
+			// TODO Check the delta after subtraction.
+			/*
+			 * Set current piece coordinates.
+			 */
+			piece.moveX(x - piece.getMinX());
+			piece.moveY(y - piece.getMinY());
+
+			/*
+			 * Move lines for next placement.
+			 */
+			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
+				if (dx < width) {
+					level[dx] = y + piece.getHeight();
+				}
+			}
+			x += piece.getWidth();
 		}
 	}
 

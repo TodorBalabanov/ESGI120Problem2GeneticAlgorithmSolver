@@ -23,18 +23,21 @@ class Util {
 
 		Scanner in = new Scanner(System.in);
 		if (in.hasNextInt() == false) {
+			in.close();
 			throw new RuntimeException(
 					"First number should be number of pieces.");
 		}
 		n = in.nextInt();
 
 		if (in.hasNextInt() == false) {
+			in.close();
 			throw new RuntimeException(
 					"Second number should be width of the sheet.");
 		}
 		X = in.nextInt();
 
 		if (in.hasNextInt() == false) {
+			in.close();
 			throw new RuntimeException(
 					"Third number should be height of the sheet.");
 		}
@@ -98,10 +101,10 @@ class Util {
 				g.setColor(Color.pink);
 				break;
 			}
-			g.fillPolygon(piece.getPoints());
+			g.fillPolygon(piece.getPolygon());
 
 			g.setColor(Color.black);
-			g.drawPolygon(piece.getPoints());
+			g.drawPolygon(piece.getPolygon());
 		}
 
 		try {
@@ -111,5 +114,4 @@ class Util {
 
 		g.dispose();
 	}
-
 }
