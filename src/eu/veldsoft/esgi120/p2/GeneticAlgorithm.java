@@ -176,7 +176,12 @@ class GeneticAlgorithm {
 		int level = 0;
 
 		for (Piece current : unorderd) {
-			// TODO Rotate if the piece is out of sheet.
+			/*
+			 * Rotate on 90 degrees if the piece does not fit in the sheet.
+			 */
+			if(current.getWidth() > width) {
+				current.turn(Math.PI/2);
+			}
 
 			int bestLeft = 0;
 			int bestTop = level;
