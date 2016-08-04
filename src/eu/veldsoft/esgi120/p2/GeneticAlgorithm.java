@@ -13,9 +13,8 @@ class GeneticAlgorithm {
 	private Vector<Double> fitness = new Vector<Double>();
 	private Vector<Vector<Piece>> population = new Vector<Vector<Piece>>();
 
-	private boolean overlap(Piece current) {
-		Vector<Piece> result = population.get(worstIndex);
-		for (Piece piece : result) {
+	private boolean overlap(Piece current, Vector<Piece> pieces) {
+		for (Piece piece : pieces) {
 			if (current == piece) {
 				continue;
 			}
@@ -160,15 +159,81 @@ class GeneticAlgorithm {
 			while (piece.getMinX() < 0 || piece.getMaxX() >= width
 					|| piece.getMinY() < 0
 					|| piece.getMaxY() + piece.getHeight() >= height
-					|| overlap(piece) == true) {
+					|| overlap(piece, population.get(worstIndex)) == true) {
 				piece.moveX(Util.PRNG.nextInt(width - piece.getWidth()));
 				piece.moveY(Util.PRNG.nextInt(height - piece.getHeight()));
 			}
 		}
 	}
 
+	public void pack2(int width, int height) {
+		Vector<Piece> ordered = new Vector<Piece>();
+		Vector<Piece> unorderd = population.get(worstIndex);
+
+		/*
+		 * Virtual Y boundary.
+		 */
+		int level = 0;
+
+		for (Piece current : unorderd) {
+			// TODO Rotate if the piece is out of sheet.
+
+			int bestLeft = 0;
+			int bestTop = level;
+			current.moveX(-current.getMinX());
+			current.moveY(-current.getMinY() + level);
+
+			/*
+			 * Move across sheet width.
+			 */
+			for (int leftOffset = 0; leftOffset < width - current.getWidth(); leftOffset++) {
+				// TODO Create special overlap function to check only pieces on
+				// the front line for better efficiency.
+				/*
+				 * Touch sheet bounds of touch other piece.
+				 */
+				while (current.getMinY() > 0
+						&& overlap(current, ordered) == false) {
+					current.moveY(-1);
+				}
+				current.moveY(+1);
+
+				/*
+				 * Keep the best found position.
+				 */
+				if (current.getMinY() < bestTop) {
+					bestTop = current.getMinY();
+					bestLeft = current.getMinX();
+				}
+
+				/*
+				 * Try next position on right.
+				 */
+				current.moveX(+1);
+			}
+
+			/*
+			 * Put the piece in the best available coordinates.
+			 */
+			current.moveX(-current.getMinX() + bestLeft);
+			current.moveY(-current.getMinY() + bestTop);
+
+			/*
+			 * Shift sheet level if the current piece is out of previous bounds.
+			 */
+			if (current.getMaxY() > level) {
+				level = current.getMaxY();
+			}
+
+			/*
+			 * Add current piece in the ordered set.
+			 */
+			ordered.add(current);
+		}
+	}
+
 	// TODO Pack polygons not surrounding rectangle.
-	public void pack(int width, int height) {
+	public void pack1(int width, int height) {
 		int level[] = new int[width];
 		for (int i = 0; i < level.length; i++) {
 			level[i] = 0;

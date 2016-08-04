@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Vector;
 
 public class Main {
-	private static final long NUMBER_OF_NEW_INDIVIDUALS = 10_000;//_000;
+	private static final long NUMBER_OF_NEW_INDIVIDUALS = 10;// _000_000;
 
 	public static void main(String[] args) {
 		Object data[] = Util.readInputByCoordinates();
@@ -19,7 +19,7 @@ public class Main {
 			ga.select();
 			ga.crossover();
 			ga.mutate();
-			ga.pack(X, Y);
+			ga.pack2(X, Y);
 			ga.evaluate();
 			if ((80 * g / NUMBER_OF_NEW_INDIVIDUALS + 1) == (80 * (g + 1) / NUMBER_OF_NEW_INDIVIDUALS)) {
 				System.out.print("=");
