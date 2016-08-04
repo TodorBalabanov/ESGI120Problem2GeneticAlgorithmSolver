@@ -177,10 +177,15 @@ class GeneticAlgorithm {
 
 		for (Piece current : unorderd) {
 			/*
-			 * Rotate on 90 degrees if the piece does not fit in the sheet.
+			 * Rotate on +90 or -90 degrees if the piece does not fit in the
+			 * sheet.
 			 */
-			if(current.getWidth() > width) {
-				current.turn(Math.PI/2);
+			if (current.getWidth() > width) {
+				if (Util.PRNG.nextBoolean()) {
+					current.turn(1 * Math.PI / 2);
+				} else {
+					current.turn(3 * Math.PI / 2);
+				}
 			}
 
 			int bestLeft = 0;
