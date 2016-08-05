@@ -13,9 +13,41 @@ class GeneticAlgorithm {
 	private Vector<Double> fitness = new Vector<Double>();
 	private Vector<Vector<Piece>> population = new Vector<Vector<Piece>>();
 
-	private boolean overlap(Piece current, Vector<Piece> pieces) {
+	/**
+	 * Find optimal touch of a piece according front of deployed pieces.
+	 * 
+	 * @param current
+	 *            Piece for deployment.
+	 * @param pieces
+	 *            List of pieces in the front of the deployment.
+	 * 
+	 * @return List of all pieces, which was unaccessible for the current piece
+	 *         to touch.
+	 */
+	private Vector<Piece> touchFront(Piece current, Vector<Piece> front) {
+		Vector<Piece> untouched = new Vector<Piece>();
+
+		// TODO
+
+		return untouched;
+	}
+
+	private Piece overlap(Piece current, Vector<Piece> pieces) {
 		for (Piece piece : pieces) {
+			/*
+			 * The piece can not overlap with itself.
+			 */
 			if (current == piece) {
+				continue;
+			}
+
+			/*
+			 * If bound rectangles do not overlap the pieces do not overlap.
+			 */
+			if (current.getMaxX() < piece.getMinX()
+					|| piece.getMaxX() < current.getMinX()
+					|| current.getMaxY() < piece.getMinY()
+					|| piece.getMaxY() < current.getMinY()) {
 				continue;
 			}
 
@@ -25,11 +57,44 @@ class GeneticAlgorithm {
 			Area area = (Area) current.getArea().clone();
 			area.intersect(piece.getArea());
 			if (area.isEmpty() == false) {
-				return true;
+				return piece;
 			}
 		}
 
-		return false;
+		return null;
+	}
+
+	private void allLandscape(Vector<Piece> pieces) {
+		/*
+		 * Rotate all pieces.
+		 */
+		for (Piece piece : pieces) {
+			if (piece.getWidth() < piece.getHeight()) {
+				piece.turn((Util.PRNG.nextBoolean() ? 3D : 1D) * Math.PI / 2D);
+			}
+		}
+	}
+
+	private void allPortrait(Vector<Piece> pieces) {
+		/*
+		 * Rotate all pieces.
+		 */
+		for (Piece piece : pieces) {
+			if (piece.getWidth() > piece.getHeight()) {
+				piece.turn((Util.PRNG.nextBoolean() ? 3D : 1D) * Math.PI / 2D);
+			}
+		}
+	}
+
+	private void allAtRandomAngle(Vector<Piece> pieces) {
+		/*
+		 * Rotate all pieces.
+		 */
+		for (Piece piece : pieces) {
+			if (piece.getWidth() > piece.getHeight()) {
+				piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
+			}
+		}
 	}
 
 	GeneticAlgorithm(int populationSize, Vector<Piece> pieces) {
@@ -49,15 +114,18 @@ class GeneticAlgorithm {
 
 			Collections.shuffle(chromosome);
 
-			switch (Util.PRNG.nextInt(3)) {
+			switch (Util.PRNG.nextInt(4)) {
 			case 0:
 				/* Unchanged. */
 				break;
 			case 1:
-				// TODO allLandscape(chromosome);
+				allLandscape(chromosome);
 				break;
 			case 2:
-				// TODO allPortrait(chromosome);
+				allPortrait(chromosome);
+				break;
+			case 3:
+				allAtRandomAngle(chromosome);
 				break;
 			}
 
@@ -139,18 +207,25 @@ class GeneticAlgorithm {
 
 		// TODO Find better way to select random angle.
 		if (Util.PRNG.nextBoolean() == true) {
-			piece.turn(Util.PRNG.nextDouble() * Math.PI / 8);
+			piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
 		}
 
+		/*
+		 * Change the order of the pieces.
+		 */
 		if (Util.PRNG.nextBoolean() == true) {
 			piece = result.remove(Util.PRNG.nextInt(result.size()));
 			result.add(piece);
 		}
-
 	}
 
 	/**
 	 * Bring all pieces in the boundaries of the the sheet.
+	 * 
+	 * @param width
+	 *            Sheet width.
+	 * @param height
+	 *            Sheet height.
 	 */
 	void bound(int width, int height) {
 		Vector<Piece> result = population.get(worstIndex);
@@ -159,7 +234,7 @@ class GeneticAlgorithm {
 			while (piece.getMinX() < 0 || piece.getMaxX() >= width
 					|| piece.getMinY() < 0
 					|| piece.getMaxY() + piece.getHeight() >= height
-					|| overlap(piece, population.get(worstIndex)) == true) {
+					|| overlap(piece, population.get(worstIndex)) != null) {
 				piece.moveX(Util.PRNG.nextInt(width - piece.getWidth()));
 				piece.moveY(Util.PRNG.nextInt(height - piece.getHeight()));
 			}
@@ -167,7 +242,7 @@ class GeneticAlgorithm {
 	}
 
 	public void pack2(int width, int height) {
-		Vector<Piece> ordered = new Vector<Piece>();
+		Vector<Piece> front = new Vector<Piece>();
 		Vector<Piece> unorderd = population.get(worstIndex);
 
 		/*
@@ -181,11 +256,7 @@ class GeneticAlgorithm {
 			 * sheet.
 			 */
 			if (current.getWidth() > width) {
-				if (Util.PRNG.nextBoolean()) {
-					current.turn(1 * Math.PI / 2);
-				} else {
-					current.turn(3 * Math.PI / 2);
-				}
+				current.turn((Util.PRNG.nextBoolean() ? 3D : 1D) * Math.PI / 2D);
 			}
 
 			int bestLeft = 0;
@@ -196,14 +267,15 @@ class GeneticAlgorithm {
 			/*
 			 * Move across sheet width.
 			 */
-			for (int leftOffset = 0; leftOffset < width - current.getWidth(); leftOffset++) {
+			while (current.getMaxX() < width) {
 				// TODO Create special overlap function to check only pieces on
 				// the front line for better efficiency.
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
+				Piece touch = null;
 				while (current.getMinY() > 0
-						&& overlap(current, ordered) == false) {
+						&& (touch = overlap(current, front)) == null) {
 					current.moveY(-1);
 				}
 				current.moveY(+1);
@@ -236,9 +308,9 @@ class GeneticAlgorithm {
 			}
 
 			/*
-			 * Add current piece in the ordered set.
+			 * Add current piece in the ordered set and the front set.
 			 */
-			ordered.add(current);
+			front.add(current);
 		}
 	}
 

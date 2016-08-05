@@ -49,17 +49,20 @@ class Piece implements Cloneable {
 
 	@Override
 	protected Object clone() {
-		Piece piece = new Piece();
-
-		piece.id = id;
-		piece.polygon = new Polygon(polygon.xpoints, polygon.ypoints,
-				polygon.npoints);
-		piece.updateInternalDataStructure();
-
+		Piece piece = new Piece(this);
 		return piece;
 	}
 
 	private Piece() {
+	}
+
+	private Piece(Piece parent) {
+		id = parent.id;
+		polygon = new Polygon();
+		for (int i=0; i<parent.polygon.npoints; i++) {
+			polygon.addPoint(parent.polygon.xpoints[i], parent.polygon.ypoints[i]);
+		}
+		updateInternalDataStructure();
 	}
 
 	private int minX() {

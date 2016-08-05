@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Vector;
 
 public class Main {
+	private static final int POPULATION_SIZE = 37;
+	
 	private static final long NUMBER_OF_NEW_INDIVIDUALS = 100;//10_000_000;
 
 	public static void main(String[] args) {
@@ -13,7 +15,7 @@ public class Main {
 		int X = (Integer) data[1];
 		int Y = (Integer) data[2];
 
-		GeneticAlgorithm ga = new GeneticAlgorithm(47, pieces);
+		GeneticAlgorithm ga = new GeneticAlgorithm(POPULATION_SIZE, pieces);
 		for (long g = 0L; g < NUMBER_OF_NEW_INDIVIDUALS; g++) {
 			ga.findBestAndWorst();
 			ga.select();
