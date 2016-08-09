@@ -19,31 +19,30 @@ class Piece implements Cloneable {
 	 * Piece polygon coordinates.
 	 */
 	private Polygon polygon = new Polygon();
-	
+
 	/**
 	 * Piece as area object.
 	 */
 	private Area area = new Area();
 
-	private int minX;
+	private int minX = 0;
 
-	private int maxX;
+	private int maxX = 0;
 
-	private int minY;
+	private int minY = 0;
 
-	private int maxY;
+	private int maxY = 0;
 
 	private void updateInternalDataStructure() {
 		if (polygon.xpoints == null || polygon.ypoints == null
-				|| polygon.xpoints.length <= 0 || polygon.ypoints.length <= 0) {
+				|| polygon.npoints <= 0 || polygon.xpoints.length <= 0
+				|| polygon.ypoints.length <= 0) {
 			return;
 		}
 
-		minX = minX();
-		maxX = maxX();
-		minY = minY();
-		maxY = maxY();
-		
+		minAndMaxX();
+		minAndMaxY();
+
 		area = new Area(polygon);
 	}
 
@@ -59,58 +58,37 @@ class Piece implements Cloneable {
 	private Piece(Piece parent) {
 		id = parent.id;
 		polygon = new Polygon();
-		for (int i=0; i<parent.polygon.npoints; i++) {
-			polygon.addPoint(parent.polygon.xpoints[i], parent.polygon.ypoints[i]);
+		for (int i = 0; i < parent.polygon.npoints; i++) {
+			polygon.addPoint(parent.polygon.xpoints[i],
+					parent.polygon.ypoints[i]);
 		}
 		updateInternalDataStructure();
 	}
 
-	private int minX() {
-		// TODO Store value, do not calculate it.
-		int min = polygon.xpoints[0];
-		for (int x : polygon.xpoints) {
-			if (x < min) {
-				min = x;
+	private void minAndMaxX() {
+		minX = polygon.xpoints[0];
+		maxX = polygon.xpoints[0];
+		for (int i = 0; i < polygon.npoints; i++) {
+			if (polygon.xpoints[i] < minX) {
+				minX = polygon.xpoints[i];
+			}
+			if (polygon.xpoints[i] > maxX) {
+				maxX = polygon.xpoints[i];
 			}
 		}
-
-		return min;
 	}
 
-	private int maxX() {
-		// TODO Store value, do not calculate it.
-		int max = polygon.xpoints[0];
-		for (int x : polygon.xpoints) {
-			if (x > max) {
-				max = x;
+	private void minAndMaxY() {
+		minY = polygon.ypoints[0];
+		maxY = polygon.ypoints[0];
+		for (int j = 0; j < polygon.npoints; j++) {
+			if (polygon.ypoints[j] < minY) {
+				minY = polygon.ypoints[j];
+			}
+			if (polygon.ypoints[j] > maxY) {
+				maxY = polygon.ypoints[j];
 			}
 		}
-
-		return max;
-	}
-
-	private int minY() {
-		// TODO Store value, do not calculate it.
-		int min = polygon.ypoints[0];
-		for (int y : polygon.ypoints) {
-			if (y < min) {
-				min = y;
-			}
-		}
-
-		return min;
-	}
-
-	private int maxY() {
-		// TODO Store value, do not calculate it.
-		int max = polygon.ypoints[0];
-		for (int y : polygon.ypoints) {
-			if (y > max) {
-				max = y;
-			}
-		}
-
-		return max;
 	}
 
 	Piece(int polygon[][]) {
@@ -120,8 +98,8 @@ class Piece implements Cloneable {
 		id = counter;
 
 		this.polygon = new Polygon();
-		for (int[] coordinates : polygon) {
-			this.polygon.addPoint(coordinates[0], coordinates[1]);
+		for (int k = 0; k < polygon.length; k++) {
+			this.polygon.addPoint(polygon[k][0], polygon[k][1]);
 		}
 		updateInternalDataStructure();
 	}
@@ -181,7 +159,8 @@ class Piece implements Cloneable {
 	/**
 	 * Rotate the piece on specified angle.
 	 * 
-	 * @param dr Angle of rotation.
+	 * @param dr
+	 *            Angle of rotation.
 	 */
 	void turn(double dr) {
 		/*
@@ -189,11 +168,11 @@ class Piece implements Cloneable {
 		 */
 		double source[] = new double[polygon.npoints * 2];
 		double destination[] = new double[polygon.npoints * 2];
-		for(int k=0, l=0; k<polygon.npoints; k++){
+		for (int k = 0, l = 0; k < polygon.npoints; k++) {
 			source[l++] = polygon.xpoints[k];
 			source[l++] = polygon.ypoints[k];
 		}
-		
+
 		/*
 		 * Rotate according piece center.
 		 */
@@ -204,23 +183,23 @@ class Piece implements Cloneable {
 		/*
 		 * Transform the single array in parallel arrays.
 		 */
-		for(int k=0, l=0; k<polygon.npoints; k++){
-			polygon.xpoints[k] = (int)Math.round(destination[l++]);
-			polygon.ypoints[k] = (int)Math.round(destination[l++]);
+		for (int k = 0, l = 0; k < polygon.npoints; k++) {
+			polygon.xpoints[k] = (int) Math.round(destination[l++]);
+			polygon.ypoints[k] = (int) Math.round(destination[l++]);
 		}
 
 		updateInternalDataStructure();
 	}
 
 	public void moveX(int dx) {
-		for (int i = 0; i < polygon.xpoints.length; i++) {
+		for (int i = 0; i < polygon.npoints; i++) {
 			polygon.xpoints[i] += dx;
 		}
 		updateInternalDataStructure();
 	}
 
 	public void moveY(int dy) {
-		for (int j = 0; j < polygon.ypoints.length; j++) {
+		for (int j = 0; j < polygon.npoints; j++) {
 			polygon.ypoints[j] += dy;
 		}
 		updateInternalDataStructure();

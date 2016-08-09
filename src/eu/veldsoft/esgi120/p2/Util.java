@@ -47,6 +47,9 @@ class Util {
 		while (in.hasNextLine() == true) {
 			line = in.nextLine().trim();
 			String values[] = line.split("\\s+");
+			if (values.length < 6) {
+				continue;
+			}
 
 			int coordinates[][] = new int[values.length / 2][2];
 			for (int i = 0, j = 0; i < coordinates.length; i++) {
@@ -75,7 +78,7 @@ class Util {
 		g.fillRect(0, 0, width, height);
 
 		for (Piece piece : pieces) {
-			switch (PRNG.nextInt(8)) {
+			switch (PRNG.nextInt(10)) {
 			case 0:
 				g.setColor(Color.yellow);
 				break;
@@ -99,6 +102,12 @@ class Util {
 				break;
 			case 7:
 				g.setColor(Color.pink);
+				break;
+			case 8:
+				g.setColor(Color.gray);
+				break;
+			case 9:
+				g.setColor(Color.lightGray);
 				break;
 			}
 			g.fillPolygon(piece.getPolygon());
