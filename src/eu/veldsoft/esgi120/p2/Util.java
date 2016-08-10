@@ -51,11 +51,63 @@ class Util {
 				continue;
 			}
 
+			int minX = 0;
+			int maxX = 0;
+			int minY = 0;
+			int maxY = 0;
 			int coordinates[][] = new int[values.length / 2][2];
 			for (int i = 0, j = 0; i < coordinates.length; i++) {
 				// TODO Exception handling for string to integer transformation.
 				coordinates[i][0] = Integer.valueOf(values[j++]);
 				coordinates[i][1] = Integer.valueOf(values[j++]);
+
+				if (i == 0) {
+					minX = coordinates[i][0];
+					maxX = coordinates[i][0];
+					minY = coordinates[i][1];
+					maxY = coordinates[i][1];
+				} else {
+					if (minX > coordinates[i][0]) {
+						minX = coordinates[i][0];
+					}
+					if (maxX < coordinates[i][0]) {
+						maxX = coordinates[i][0];
+					}
+					if (minY > coordinates[i][1]) {
+						minY = coordinates[i][1];
+					}
+					if (maxY < coordinates[i][1]) {
+						maxY = coordinates[i][1];
+					}
+				}
+			}
+
+			/*
+			 * Flip by sheet width.
+			 */
+			if (maxX - minX > X) {
+				int value;
+				for (int k = 0; k < coordinates.length; k++) {
+					value = coordinates[k][0];
+					coordinates[k][0] = coordinates[k][1];
+					coordinates[k][1] = value;
+				}
+
+				value = minX;
+				minX = minY;
+				minY = value;
+
+				value = maxX;
+				maxX = maxY;
+				maxY = value;
+			}
+
+			/*
+			 * Move to center.
+			 */
+			for (int k = 0; k < coordinates.length; k++) {
+				coordinates[k][0] += X / 2 - (minX + maxX) / 2 - minX;
+				coordinates[k][1] += Y / 2 - (minY + maxY) / 2 - minY;
 			}
 
 			pieces.add(new Piece(coordinates));

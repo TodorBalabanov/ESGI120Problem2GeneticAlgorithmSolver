@@ -3,6 +3,7 @@ package eu.veldsoft.esgi120.p2;
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.util.Arrays;
 
 class Piece implements Cloneable {
 	/**
@@ -205,6 +206,17 @@ class Piece implements Cloneable {
 		updateInternalDataStructure();
 	}
 
+	public void flip() {
+		int value = 0;
+		for (int k = 0; k < polygon.npoints; k++) {
+			value = polygon.xpoints[k];
+			polygon.xpoints[k] = polygon.ypoints[k];
+			polygon.ypoints[k] = value;
+		}
+
+		updateInternalDataStructure();
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -225,5 +237,18 @@ class Piece implements Cloneable {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Piece [id=" + id + ", polygon="
+				+ Arrays.toString(polygon.xpoints) + " "
+				+ Arrays.toString(polygon.ypoints) + ", minX=" + minX
+				+ ", maxX=" + maxX + ", minY=" + minY + ", maxY=" + maxY + "]";
 	}
 }

@@ -70,7 +70,7 @@ class GeneticAlgorithm {
 		 */
 		for (Piece piece : pieces) {
 			if (piece.getWidth() < piece.getHeight()) {
-				piece.turn((Util.PRNG.nextBoolean() ? 3D : 1D) * Math.PI / 2D);
+				piece.flip();
 			}
 		}
 	}
@@ -81,7 +81,7 @@ class GeneticAlgorithm {
 		 */
 		for (Piece piece : pieces) {
 			if (piece.getWidth() > piece.getHeight()) {
-				piece.turn((Util.PRNG.nextBoolean() ? 3D : 1D) * Math.PI / 2D);
+				piece.flip();
 			}
 		}
 	}
@@ -91,9 +91,14 @@ class GeneticAlgorithm {
 		 * Rotate all pieces.
 		 */
 		for (Piece piece : pieces) {
-			if (piece.getWidth() > piece.getHeight()) {
-				piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
-			}
+			piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
+		}
+	}
+
+	private void allCenter(Vector<Piece> pieces, int width, int height) {
+		for (Piece piece : pieces) {
+			piece.moveX(-piece.getMinX() + width / 2 - piece.getWidth() / 2);
+			piece.moveY(-piece.getMinY() + height / 2 - piece.getHeight() / 2);
 		}
 	}
 
@@ -114,18 +119,20 @@ class GeneticAlgorithm {
 
 			Collections.shuffle(chromosome);
 
-			switch (Util.PRNG.nextInt(4)) {
+			switch (Util.PRNG.nextInt(6)) {
 			case 0:
-				/* Unchanged. */
-				break;
 			case 1:
-				allLandscape(chromosome);
-				break;
 			case 2:
-				allPortrait(chromosome);
+				allAtRandomAngle(chromosome);
 				break;
 			case 3:
-				allAtRandomAngle(chromosome);
+				allLandscape(chromosome);
+				break;
+			case 4:
+				allPortrait(chromosome);
+				break;
+			case 5:
+				/* Unchanged. */
 				break;
 			}
 
