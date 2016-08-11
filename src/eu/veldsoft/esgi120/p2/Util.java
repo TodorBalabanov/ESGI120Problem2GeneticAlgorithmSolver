@@ -130,6 +130,18 @@ class Util {
 		g.fillRect(0, 0, width, height);
 
 		for (Piece piece : pieces) {
+			g.setColor(Color.black);
+			piece.moveX(-1);
+			g.fillPolygon(piece.getPolygon());
+			piece.moveX(+2);
+			g.fillPolygon(piece.getPolygon());
+			piece.moveX(-1);
+			piece.moveY(-1);
+			g.fillPolygon(piece.getPolygon());
+			piece.moveY(+2);
+			g.fillPolygon(piece.getPolygon());
+			piece.moveY(-1);
+			
 			switch (PRNG.nextInt(10)) {
 			case 0:
 				g.setColor(Color.yellow);
@@ -163,9 +175,8 @@ class Util {
 				break;
 			}
 			g.fillPolygon(piece.getPolygon());
-
-			g.setColor(Color.black);
-			g.drawPolygon(piece.getPolygon());
+			//g.setColor(Color.black);
+			//g.drawPolygon(piece.getPolygon());
 		}
 
 		try {
