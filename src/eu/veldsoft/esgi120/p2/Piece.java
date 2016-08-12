@@ -5,6 +5,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.Arrays;
 
+/**
+ * Representation of a sigle piece to cut.
+ * 
+ * @author Todor Balabanov
+ */
 class Piece implements Cloneable {
 	/**
 	 * It is used for generation of unique object identifiers.
@@ -26,14 +31,29 @@ class Piece implements Cloneable {
 	 */
 	private Area area = new Area();
 
+	/**
+	 * Minimum x coordinate.
+	 */
 	private int minX = 0;
 
+	/**
+	 * Maximum x coordinate.
+	 */
 	private int maxX = 0;
 
+	/**
+	 * Minimum y coordinate.
+	 */
 	private int minY = 0;
 
+	/**
+	 * Maximum y coordinate.
+	 */
 	private int maxY = 0;
 
+	/**
+	 * Update internal variables if the piece is modified.
+	 */
 	private void updateInternalDataStructure() {
 		if (polygon.xpoints == null || polygon.ypoints == null
 				|| polygon.npoints <= 0 || polygon.xpoints.length <= 0
@@ -47,15 +67,27 @@ class Piece implements Cloneable {
 		area = new Area(polygon);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected Object clone() {
 		Piece piece = new Piece(this);
 		return piece;
 	}
 
+	/**
+	 * Privet constructor to block piece instance creation.
+	 */
 	private Piece() {
 	}
 
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param parent
+	 *            Original object.
+	 */
 	private Piece(Piece parent) {
 		id = parent.id;
 		polygon = new Polygon();
@@ -66,6 +98,9 @@ class Piece implements Cloneable {
 		updateInternalDataStructure();
 	}
 
+	/**
+	 * Find minimum x and maximum x.
+	 */
 	private void minAndMaxX() {
 		minX = polygon.xpoints[0];
 		maxX = polygon.xpoints[0];
@@ -79,6 +114,9 @@ class Piece implements Cloneable {
 		}
 	}
 
+	/**
+	 * Find minimum y and maximum y.
+	 */
 	private void minAndMaxY() {
 		minY = polygon.ypoints[0];
 		maxY = polygon.ypoints[0];
@@ -92,15 +130,21 @@ class Piece implements Cloneable {
 		}
 	}
 
-	Piece(int polygon[][]) {
+	/**
+	 * Construct pieces by array of points coordinates.
+	 * 
+	 * @param coordinates
+	 *            Point coordinates.
+	 */
+	Piece(int coordinates[][]) {
 		super();
 
 		counter++;
 		id = counter;
 
 		this.polygon = new Polygon();
-		for (int k = 0; k < polygon.length; k++) {
-			this.polygon.addPoint(polygon[k][0], polygon[k][1]);
+		for (int k = 0; k < coordinates.length; k++) {
+			this.polygon.addPoint(coordinates[k][0], coordinates[k][1]);
 		}
 		updateInternalDataStructure();
 	}
@@ -133,26 +177,56 @@ class Piece implements Cloneable {
 		updateInternalDataStructure();
 	}
 
+	/**
+	 * Minimum x getter.
+	 * 
+	 * @return Minimum x coordinate.
+	 */
 	int getMinX() {
 		return minX;
 	}
 
+	/**
+	 * Maximum x getter.
+	 * 
+	 * @return Maximum x coordinate.
+	 */
 	int getMaxX() {
 		return maxX;
 	}
 
+	/**
+	 * Minimum y getter.
+	 * 
+	 * @return Minimum y coordinate.
+	 */
 	int getMinY() {
 		return minY;
 	}
 
+	/**
+	 * Maximum y getter.
+	 * 
+	 * @return Maximum y coordinate.
+	 */
 	int getMaxY() {
 		return maxY;
 	}
 
+	/**
+	 * Piece width getter.
+	 * 
+	 * @return Piece width.
+	 */
 	int getWidth() {
 		return maxX - minX;
 	}
 
+	/**
+	 * Piece height getter.
+	 * 
+	 * @return Piece height.
+	 */
 	int getHeight() {
 		return maxY - minY;
 	}
@@ -192,6 +266,12 @@ class Piece implements Cloneable {
 		updateInternalDataStructure();
 	}
 
+	/**
+	 * Move piece on specified distance.
+	 * 
+	 * @param dx
+	 *            Distance to move on.
+	 */
 	public void moveX(int dx) {
 		for (int i = 0; i < polygon.npoints; i++) {
 			polygon.xpoints[i] += dx;
@@ -199,6 +279,12 @@ class Piece implements Cloneable {
 		updateInternalDataStructure();
 	}
 
+	/**
+	 * Move piece on specified distance.
+	 * 
+	 * @param dx
+	 *            Distance to move on.
+	 */
 	public void moveY(int dy) {
 		for (int j = 0; j < polygon.npoints; j++) {
 			polygon.ypoints[j] += dy;
@@ -206,6 +292,9 @@ class Piece implements Cloneable {
 		updateInternalDataStructure();
 	}
 
+	/**
+	 * Flip the by the primary diagonal.
+	 */
 	public void flip() {
 		int value = 0;
 		for (int k = 0; k < polygon.npoints; k++) {
@@ -217,6 +306,9 @@ class Piece implements Cloneable {
 		updateInternalDataStructure();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -225,6 +317,9 @@ class Piece implements Cloneable {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

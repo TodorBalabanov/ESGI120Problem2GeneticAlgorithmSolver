@@ -11,10 +11,22 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Utilities class.
+ * 
+ * @author Todor Balabanov
+ */
 class Util {
-
+	/**
+	 * Pseudo-random number generator instance.
+	 */
 	static final Random PRNG = new Random();
 
+	/**
+	 * Read input data as points coordinates.
+	 * 
+	 * @return Array with coordinates and sheet dimessions.
+	 */
 	static Object[] readInputByCoordinates() {
 		int n;
 		int X;
@@ -119,6 +131,18 @@ class Util {
 		return result;
 	}
 
+	/**
+	 * Save solution as image file.
+	 * 
+	 * @param fileName
+	 *            Image file name.
+	 * @param pieces
+	 *            List of pieces.
+	 * @param width
+	 *            Sheet width.
+	 * @param height
+	 *            Sheet height.
+	 */
 	static void saveSolution(String fileName, Vector<Piece> pieces, int width,
 			int height) {
 		BufferedImage image = new BufferedImage(width, height,
@@ -141,7 +165,7 @@ class Util {
 			piece.moveY(+2);
 			g.fillPolygon(piece.getPolygon());
 			piece.moveY(-1);
-			
+
 			switch (PRNG.nextInt(10)) {
 			case 0:
 				g.setColor(Color.yellow);
@@ -175,8 +199,6 @@ class Util {
 				break;
 			}
 			g.fillPolygon(piece.getPolygon());
-			//g.setColor(Color.black);
-			//g.drawPolygon(piece.getPolygon());
 		}
 
 		try {

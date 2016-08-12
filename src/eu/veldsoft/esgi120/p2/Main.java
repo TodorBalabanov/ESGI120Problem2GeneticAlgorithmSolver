@@ -4,10 +4,22 @@ import java.util.Date;
 import java.util.Vector;
 
 public class Main {
+	/**
+	 * Population size.
+	 */
 	private static final int POPULATION_SIZE = 17;
 
+	/**
+	 * How many individuals to be crated during optimization process.
+	 */
 	private static final long NUMBER_OF_NEW_INDIVIDUALS = 170;// 10_000_000;
 
+	/**
+	 * Application single entry point.
+	 * 
+	 * @param args
+	 *            Command line arguments.
+	 */
 	public static void main(String[] args) {
 		Object data[] = Util.readInputByCoordinates();
 

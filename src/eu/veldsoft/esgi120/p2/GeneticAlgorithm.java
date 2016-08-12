@@ -4,13 +4,40 @@ import java.awt.geom.Area;
 import java.util.Collections;
 import java.util.Vector;
 
+/**
+ * Genetic algorithm implementation.
+ * 
+ * @author Todor Balabanov
+ */
 class GeneticAlgorithm {
+	/**
+	 * First parent.
+	 */
 	private int firstIndex;
+
+	/**
+	 * Second parent.
+	 */
 	private int secondIndex;
+
+	/**
+	 * Index of the best individual in the population.
+	 */
 	private int bestIndex;
+
+	/**
+	 * Index of the worst individual in the population.
+	 */
 	private int worstIndex;
 
+	/**
+	 * Fitness values of the individuals.
+	 */
 	private Vector<Double> fitness = new Vector<Double>();
+
+	/**
+	 * Population individuals.
+	 */
 	private Vector<Vector<Piece>> population = new Vector<Vector<Piece>>();
 
 	/**
@@ -32,6 +59,17 @@ class GeneticAlgorithm {
 		return untouched;
 	}
 
+	/**
+	 * Check for overlapping of specified piece with the others.
+	 * 
+	 * @param current
+	 *            Piece to check for.
+	 * @param pieces
+	 *            All other pieces.
+	 * 
+	 * @return Reference to overlapped piece or null pointer if there is no
+	 *         overlapping.
+	 */
 	private Piece overlap(Piece current, Vector<Piece> pieces) {
 		for (Piece piece : pieces) {
 			/*
@@ -64,6 +102,12 @@ class GeneticAlgorithm {
 		return null;
 	}
 
+	/**
+	 * Flip all pieces to be landscape.
+	 * 
+	 * @param pieces
+	 *            All pieces.
+	 */
 	private void allLandscape(Vector<Piece> pieces) {
 		/*
 		 * Rotate all pieces.
@@ -75,6 +119,12 @@ class GeneticAlgorithm {
 		}
 	}
 
+	/**
+	 * Flip all pieces to be portrait.
+	 * 
+	 * @param pieces
+	 *            All pieces.
+	 */
 	private void allPortrait(Vector<Piece> pieces) {
 		/*
 		 * Rotate all pieces.
@@ -86,6 +136,12 @@ class GeneticAlgorithm {
 		}
 	}
 
+	/**
+	 * Rotate all pieces on random angle.
+	 * 
+	 * @param pieces
+	 *            All pieces.
+	 */
 	private void allAtRandomAngle(Vector<Piece> pieces) {
 		/*
 		 * Rotate all pieces.
@@ -95,6 +151,16 @@ class GeneticAlgorithm {
 		}
 	}
 
+	/**
+	 * Put all pices in the center of a sheet.
+	 * 
+	 * @param pieces
+	 *            List of pieces.
+	 * @param width
+	 *            Width of the sheet.
+	 * @param height
+	 *            Height of the sheet.
+	 */
 	private void allCenter(Vector<Piece> pieces, int width, int height) {
 		for (Piece piece : pieces) {
 			piece.moveX(-piece.getMinX() + width / 2 - piece.getWidth() / 2);
@@ -102,16 +168,27 @@ class GeneticAlgorithm {
 		}
 	}
 
-	GeneticAlgorithm(int populationSize, Vector<Piece> pieces) {
+	/**
+	 * Constructor with parameters.
+	 * 
+	 * @param size
+	 *            Population size.
+	 * @param pieces
+	 *            Initial pieces to initialize population.
+	 */
+	GeneticAlgorithm(int size, Vector<Piece> pieces) {
 		/*
 		 * At least 4 elements should be available in order random index
 		 * selection to work.
 		 */
-		if (populationSize < 4) {
-			populationSize = 4;
+		if (size < 4) {
+			size = 4;
 		}
 
-		for (int p = 0; p < populationSize; p++) {
+		/*
+		 * Initialize individuals.
+		 */
+		for (int p = 0; p < size; p++) {
 			Vector<Piece> chromosome = new Vector<Piece>();
 			for (Piece piece : pieces) {
 				chromosome.add((Piece) piece.clone());
@@ -159,14 +236,27 @@ class GeneticAlgorithm {
 		select();
 	}
 
+	/**
+	 * Best individual getter.
+	 * 
+	 * @return List of pieces in the best individual.
+	 */
 	Vector<Piece> getBest() {
 		return population.get(bestIndex);
 	}
 
+	/**
+	 * Best individual fitness getter.
+	 * 
+	 * @return Fitness value of the best individual.
+	 */
 	double getBestFitness() {
 		return fitness.get(bestIndex);
 	}
 
+	/**
+	 * Search for the best and the worst individuals in the population.
+	 */
 	void findBestAndWorst() {
 		bestIndex = 0;
 		worstIndex = 0;
@@ -183,6 +273,9 @@ class GeneticAlgorithm {
 		}
 	}
 
+	/**
+	 * Genetic algorithm selection operator.
+	 */
 	void select() {
 		do {
 			firstIndex = Util.PRNG.nextInt(population.size());
@@ -191,6 +284,9 @@ class GeneticAlgorithm {
 				|| secondIndex == worstIndex);
 	}
 
+	/**
+	 * Genetic algorithm crossover operator.
+	 */
 	void crossover() {
 		Vector<Piece> first = population.get(firstIndex);
 		Vector<Piece> second = population.get(secondIndex);
@@ -211,6 +307,9 @@ class GeneticAlgorithm {
 		}
 	}
 
+	/**
+	 * Genetic algorithm mutation operator.
+	 */
 	void mutate() {
 		Vector<Piece> result = population.get(worstIndex);
 
@@ -252,6 +351,15 @@ class GeneticAlgorithm {
 		}
 	}
 
+	/**
+	 * Pack function which uses exact boundaries of the polygons in the sheet
+	 * with specified dimensions.
+	 * 
+	 * @param width
+	 *            Sheet width.
+	 * @param height
+	 *            Sheet height.
+	 */
 	public void pack2(int width, int height) {
 		Vector<Piece> front = new Vector<Piece>();
 		Vector<Piece> unorderd = population.get(worstIndex);
@@ -325,8 +433,17 @@ class GeneticAlgorithm {
 		}
 	}
 
-	// TODO Pack polygons not surrounding rectangle.
+	/**
+	 * Pack function which uses bounding rectangle of the polygons in the sheet
+	 * with specified dimensions.
+	 * 
+	 * @param width
+	 *            Sheet width.
+	 * @param height
+	 *            Sheet height.
+	 */
 	public void pack1(int width, int height) {
+		// TODO Pack polygons not surrounding rectangle.
 		int level[] = new int[width];
 		for (int i = 0; i < level.length; i++) {
 			level[i] = 0;
@@ -369,6 +486,9 @@ class GeneticAlgorithm {
 		}
 	}
 
+	/**
+	 * Evaluate fitness value of the new created individual.
+	 */
 	void evaluate() {
 		Vector<Piece> result = population.get(worstIndex);
 
