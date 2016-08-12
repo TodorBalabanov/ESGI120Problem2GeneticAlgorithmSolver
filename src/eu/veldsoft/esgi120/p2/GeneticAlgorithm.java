@@ -82,10 +82,8 @@ class GeneticAlgorithm {
 			/*
 			 * If bound rectangles do not overlap the pieces do not overlap.
 			 */
-			if (current.getMaxX() < piece.getMinX()
-					|| piece.getMaxX() < current.getMinX()
-					|| current.getMaxY() < piece.getMinY()
-					|| piece.getMaxY() < current.getMinY()) {
+			if (current.getMaxX() < piece.getMinX() || piece.getMaxX() < current.getMinX()
+					|| current.getMaxY() < piece.getMinY() || piece.getMaxY() < current.getMinY()) {
 				continue;
 			}
 
@@ -213,15 +211,30 @@ class GeneticAlgorithm {
 				break;
 			}
 
-			switch (Util.PRNG.nextInt(3)) {
+			switch (Util.PRNG.nextInt(8)) {
 			case 0:
 				/* Unchanged. */
 				break;
 			case 1:
-				Collections.sort(chromosome, new WidthComparator());
+				Collections.shuffle(chromosome);
 				break;
 			case 2:
+				Collections.sort(chromosome, new WidthComparator());
+				break;
+			case 3:
+				Collections.sort(chromosome, Collections.reverseOrder(new WidthComparator()));
+				break;
+			case 4:
 				Collections.sort(chromosome, new HeightComparator());
+				break;
+			case 5:
+				Collections.sort(chromosome, Collections.reverseOrder(new HeightComparator()));
+				break;
+			case 6:
+				Collections.sort(chromosome, new BoundRectangleDimensionsComparator());
+				break;
+			case 7:
+				Collections.sort(chromosome, Collections.reverseOrder(new BoundRectangleDimensionsComparator()));
 				break;
 			}
 
@@ -262,12 +275,10 @@ class GeneticAlgorithm {
 		worstIndex = 0;
 
 		for (int index = 0; index < fitness.size(); index++) {
-			if (fitness.get(index).doubleValue() < fitness.get(bestIndex)
-					.doubleValue()) {
+			if (fitness.get(index).doubleValue() < fitness.get(bestIndex).doubleValue()) {
 				bestIndex = index;
 			}
-			if (fitness.get(index).doubleValue() > fitness.get(worstIndex)
-					.doubleValue()) {
+			if (fitness.get(index).doubleValue() > fitness.get(worstIndex).doubleValue()) {
 				worstIndex = index;
 			}
 		}
@@ -280,8 +291,7 @@ class GeneticAlgorithm {
 		do {
 			firstIndex = Util.PRNG.nextInt(population.size());
 			secondIndex = Util.PRNG.nextInt(population.size());
-		} while (firstIndex == secondIndex || firstIndex == worstIndex
-				|| secondIndex == worstIndex);
+		} while (firstIndex == secondIndex || firstIndex == worstIndex || secondIndex == worstIndex);
 	}
 
 	/**
@@ -341,8 +351,7 @@ class GeneticAlgorithm {
 		Vector<Piece> result = population.get(worstIndex);
 
 		for (Piece piece : result) {
-			while (piece.getMinX() < 0 || piece.getMaxX() >= width
-					|| piece.getMinY() < 0
+			while (piece.getMinX() < 0 || piece.getMaxX() >= width || piece.getMinY() < 0
 					|| piece.getMaxY() + piece.getHeight() >= height
 					|| overlap(piece, population.get(worstIndex)) != null) {
 				piece.moveX(Util.PRNG.nextInt(width - piece.getWidth()));
@@ -393,8 +402,7 @@ class GeneticAlgorithm {
 				 * Touch sheet bounds of touch other piece.
 				 */
 				Piece touch = null;
-				while (current.getMinY() > 0
-						&& (touch = overlap(current, front)) == null) {
+				while (current.getMinY() > 0 && (touch = overlap(current, front)) == null) {
 					current.moveY(-1);
 				}
 				current.moveY(+1);

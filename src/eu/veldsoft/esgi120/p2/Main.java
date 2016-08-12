@@ -7,12 +7,12 @@ public class Main {
 	/**
 	 * Population size.
 	 */
-	private static final int POPULATION_SIZE = 17;
+	private static final int POPULATION_SIZE = 37;
 
 	/**
-	 * How many individuals to be crated during optimization process.
+	 * How many individuals to be created during optimization process.
 	 */
-	private static final long NUMBER_OF_NEW_INDIVIDUALS = 170;// 10_000_000;
+	private static final long NUMBER_OF_NEW_INDIVIDUALS = 370;// 10_000_000;
 
 	/**
 	 * Application single entry point.
