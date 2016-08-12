@@ -163,6 +163,10 @@ class GeneticAlgorithm {
 		return population.get(bestIndex);
 	}
 
+	double getBestFitness() {
+		return fitness.get(bestIndex);
+	}
+
 	void findBestAndWorst() {
 		bestIndex = 0;
 		worstIndex = 0;
