@@ -34,7 +34,7 @@ public class Main {
 			ga.findBestAndWorst();
 
 			if ((80 * g / NUMBER_OF_NEW_INDIVIDUALS + 1) == (80 * (g + 1) / NUMBER_OF_NEW_INDIVIDUALS)) {
-				Util.saveSolution("" + Math.ceil(ga.getBestFitness()) + "temp" + (new Date()).getTime() + ".bmp",
+				Util.saveSolution("" + (int)Math.ceil(ga.getBestFitness()) + "temp" + (new Date()).getTime() + ".bmp",
 						ga.getBest(), X, Y);
 				System.out.print("=");
 			}
