@@ -516,9 +516,15 @@ class GeneticAlgorithm {
 	
 	/**
 	 * Evaluate fitness value of all individuals.
+	 * 
+	 * @param width
+	 *            Sheet width.
+	 * @param height
+	 *            Sheet height.
 	 */
-	void evaluateAll() {
+	void evaluateAll(int width, int height) {
 		for(int worstIndex=0; worstIndex<population.size(); worstIndex++) {
+			pack2(width, height);
 			evaluate();
 		}
 	}

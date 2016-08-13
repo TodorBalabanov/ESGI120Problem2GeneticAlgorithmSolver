@@ -28,7 +28,7 @@ public class Main {
 		int Y = (Integer) data[2];
 
 		GeneticAlgorithm ga = new GeneticAlgorithm(POPULATION_SIZE, pieces);
-		ga.evaluateAll();
+		ga.evaluateAll(X, Y);
 
 		for (long g = 0L; g < NUMBER_OF_NEW_INDIVIDUALS; g++) {
 			ga.findBestAndWorst();
