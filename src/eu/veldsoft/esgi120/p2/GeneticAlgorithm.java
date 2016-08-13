@@ -513,4 +513,13 @@ class GeneticAlgorithm {
 		fitness.insertElementAt(length, worstIndex);
 		fitness.remove(worstIndex + 1);
 	}
+	
+	/**
+	 * Evaluate fitness value of all individuals.
+	 */
+	void evaluateAll() {
+		for(int worstIndex=0; worstIndex<population.size(); worstIndex++) {
+			evaluate();
+		}
+	}
 }

@@ -28,16 +28,22 @@ public class Main {
 		int Y = (Integer) data[2];
 
 		GeneticAlgorithm ga = new GeneticAlgorithm(POPULATION_SIZE, pieces);
+		ga.evaluateAll();
+		
 		for (long g = 0L; g < NUMBER_OF_NEW_INDIVIDUALS; g++) {
 			ga.findBestAndWorst();
+
+			if ((80 * g / NUMBER_OF_NEW_INDIVIDUALS + 1) == (80 * (g + 1) / NUMBER_OF_NEW_INDIVIDUALS)) {
+				Util.saveSolution("temp" + (new Date()).getTime() + ".bmp", ga.getBest(),
+						X, Y);
+				System.out.print("=");
+			}
+			
 			ga.select();
 			ga.crossover();
 			ga.mutate();
 			ga.pack2(X, Y);
 			ga.evaluate();
-			if ((80 * g / NUMBER_OF_NEW_INDIVIDUALS + 1) == (80 * (g + 1) / NUMBER_OF_NEW_INDIVIDUALS)) {
-				System.out.print("=");
-			}
 		}
 		System.out.println();
 
