@@ -29,16 +29,16 @@ public class Main {
 
 		GeneticAlgorithm ga = new GeneticAlgorithm(POPULATION_SIZE, pieces);
 		ga.evaluateAll();
-		
+
 		for (long g = 0L; g < NUMBER_OF_NEW_INDIVIDUALS; g++) {
 			ga.findBestAndWorst();
 
 			if ((80 * g / NUMBER_OF_NEW_INDIVIDUALS + 1) == (80 * (g + 1) / NUMBER_OF_NEW_INDIVIDUALS)) {
-				Util.saveSolution("temp" + (new Date()).getTime() + ".bmp", ga.getBest(),
-						X, Y);
+				Util.saveSolution("" + Math.ceil(ga.getBestFitness()) + "temp" + (new Date()).getTime() + ".bmp",
+						ga.getBest(), X, Y);
 				System.out.print("=");
 			}
-			
+
 			ga.select();
 			ga.crossover();
 			ga.mutate();
@@ -48,8 +48,7 @@ public class Main {
 		System.out.println();
 
 		ga.findBestAndWorst();
-		Util.saveSolution("" + (new Date()).getTime() + ".bmp", ga.getBest(),
-				X, Y);
+		Util.saveSolution("" + (new Date()).getTime() + ".bmp", ga.getBest(), X, Y);
 		System.out.println(ga.getBestFitness());
 	}
 }
