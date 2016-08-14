@@ -457,11 +457,22 @@ class GeneticAlgorithm {
 		for (int i = 0; i < level.length; i++) {
 			level[i] = 0;
 		}
+		
+		/*
+		 * Insure pieces width according sheet width.
+		 */
+		for (Piece piece : population.get(worstIndex)) {
+			if (piece.getWidth() > width) {
+				piece.flip();
+			}
+		}
 
+		/*
+		 * Pack pieces.
+		 */
 		int x = 0;
 		int y = 0;
-		Vector<Piece> result = population.get(worstIndex);
-		for (Piece piece : result) {
+		for (Piece piece : population.get(worstIndex)) {
 			if (x + piece.getWidth() >= width) {
 				x = 0;
 			}
@@ -525,7 +536,7 @@ class GeneticAlgorithm {
 	 */
 	void evaluateAll(int width, int height) {
 		for (int worstIndex = 0; worstIndex < population.size(); worstIndex++) {
-			pack2(width, height);
+			pack1(width, height);
 			evaluate();
 		}
 	}
