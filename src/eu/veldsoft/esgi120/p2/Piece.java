@@ -6,7 +6,7 @@ import java.awt.geom.Area;
 import java.util.Arrays;
 
 /**
- * Representation of a sigle piece to cut.
+ * Representation of a single piece to cut.
  * 
  * @author Todor Balabanov
  */
@@ -25,47 +25,6 @@ class Piece implements Cloneable {
 	 * Piece polygon coordinates.
 	 */
 	private Polygon polygon = new Polygon();
-
-	/**
-	 * Piece as area object.
-	 */
-	private Area area = new Area();
-
-	/**
-	 * Minimum x coordinate.
-	 */
-	private int minX = 0;
-
-	/**
-	 * Maximum x coordinate.
-	 */
-	private int maxX = 0;
-
-	/**
-	 * Minimum y coordinate.
-	 */
-	private int minY = 0;
-
-	/**
-	 * Maximum y coordinate.
-	 */
-	private int maxY = 0;
-
-	/**
-	 * Update internal variables if the piece is modified.
-	 */
-	private void updateInternalDataStructure() {
-		if (polygon.xpoints == null || polygon.ypoints == null
-				|| polygon.npoints <= 0 || polygon.xpoints.length <= 0
-				|| polygon.ypoints.length <= 0) {
-			return;
-		}
-
-		minAndMaxX();
-		minAndMaxY();
-
-		area = new Area(polygon);
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -92,41 +51,7 @@ class Piece implements Cloneable {
 		id = parent.id;
 		polygon = new Polygon();
 		for (int i = 0; i < parent.polygon.npoints; i++) {
-			polygon.addPoint(parent.polygon.xpoints[i],
-					parent.polygon.ypoints[i]);
-		}
-		updateInternalDataStructure();
-	}
-
-	/**
-	 * Find minimum x and maximum x.
-	 */
-	private void minAndMaxX() {
-		minX = polygon.xpoints[0];
-		maxX = polygon.xpoints[0];
-		for (int i = 0; i < polygon.npoints; i++) {
-			if (polygon.xpoints[i] < minX) {
-				minX = polygon.xpoints[i];
-			}
-			if (polygon.xpoints[i] > maxX) {
-				maxX = polygon.xpoints[i];
-			}
-		}
-	}
-
-	/**
-	 * Find minimum y and maximum y.
-	 */
-	private void minAndMaxY() {
-		minY = polygon.ypoints[0];
-		maxY = polygon.ypoints[0];
-		for (int j = 0; j < polygon.npoints; j++) {
-			if (polygon.ypoints[j] < minY) {
-				minY = polygon.ypoints[j];
-			}
-			if (polygon.ypoints[j] > maxY) {
-				maxY = polygon.ypoints[j];
-			}
+			polygon.addPoint(parent.polygon.xpoints[i], parent.polygon.ypoints[i]);
 		}
 	}
 
@@ -146,7 +71,6 @@ class Piece implements Cloneable {
 		for (int k = 0; k < coordinates.length; k++) {
 			this.polygon.addPoint(coordinates[k][0], coordinates[k][1]);
 		}
-		updateInternalDataStructure();
 	}
 
 	/**
@@ -161,8 +85,7 @@ class Piece implements Cloneable {
 	 * @return Piece as area object.
 	 */
 	public Area getArea() {
-		// TODO Do a deep copy.
-		return area;
+		return new Area(polygon);
 	}
 
 	/**
@@ -174,7 +97,6 @@ class Piece implements Cloneable {
 		for (int[] coordinates : polygon) {
 			this.polygon.addPoint(coordinates[0], coordinates[1]);
 		}
-		updateInternalDataStructure();
 	}
 
 	/**
@@ -183,7 +105,7 @@ class Piece implements Cloneable {
 	 * @return Minimum x coordinate.
 	 */
 	int getMinX() {
-		return minX;
+		return polygon.getBounds().x;
 	}
 
 	/**
@@ -192,7 +114,7 @@ class Piece implements Cloneable {
 	 * @return Maximum x coordinate.
 	 */
 	int getMaxX() {
-		return maxX;
+		return polygon.getBounds().width + polygon.getBounds().x - 1;
 	}
 
 	/**
@@ -201,7 +123,7 @@ class Piece implements Cloneable {
 	 * @return Minimum y coordinate.
 	 */
 	int getMinY() {
-		return minY;
+		return polygon.getBounds().y;
 	}
 
 	/**
@@ -210,7 +132,7 @@ class Piece implements Cloneable {
 	 * @return Maximum y coordinate.
 	 */
 	int getMaxY() {
-		return maxY;
+		return polygon.getBounds().height + polygon.getBounds().y - 1;
 	}
 
 	/**
@@ -219,7 +141,7 @@ class Piece implements Cloneable {
 	 * @return Piece width.
 	 */
 	int getWidth() {
-		return maxX - minX;
+		return polygon.getBounds().width;
 	}
 
 	/**
@@ -228,7 +150,7 @@ class Piece implements Cloneable {
 	 * @return Piece height.
 	 */
 	int getHeight() {
-		return maxY - minY;
+		return polygon.getBounds().height;
 	}
 
 	/**
@@ -251,9 +173,10 @@ class Piece implements Cloneable {
 		/*
 		 * Rotate according piece center.
 		 */
-		AffineTransform.getRotateInstance(dr, (maxX + minX) / 2D,
-				(maxY + minY) / 2D).transform(source, 0, destination, 0,
-				polygon.npoints);
+		AffineTransform
+				.getRotateInstance(dr, (polygon.getBounds().x + polygon.getBounds().width - 1) / 2D,
+						(polygon.getBounds().y + polygon.getBounds().height - 1) / 2D)
+				.transform(source, 0, destination, 0, polygon.npoints);
 
 		/*
 		 * Transform the single array in parallel arrays.
@@ -262,8 +185,8 @@ class Piece implements Cloneable {
 			polygon.xpoints[k] = (int) Math.round(destination[l++]);
 			polygon.ypoints[k] = (int) Math.round(destination[l++]);
 		}
-
-		updateInternalDataStructure();
+		
+		polygon.invalidate();
 	}
 
 	/**
@@ -273,10 +196,7 @@ class Piece implements Cloneable {
 	 *            Distance to move on.
 	 */
 	public void moveX(int dx) {
-		for (int i = 0; i < polygon.npoints; i++) {
-			polygon.xpoints[i] += dx;
-		}
-		updateInternalDataStructure();
+		polygon.translate(dx, 0);
 	}
 
 	/**
@@ -286,10 +206,7 @@ class Piece implements Cloneable {
 	 *            Distance to move on.
 	 */
 	public void moveY(int dy) {
-		for (int j = 0; j < polygon.npoints; j++) {
-			polygon.ypoints[j] += dy;
-		}
-		updateInternalDataStructure();
+		polygon.translate(0, dy);
 	}
 
 	/**
@@ -302,8 +219,7 @@ class Piece implements Cloneable {
 			polygon.xpoints[k] = polygon.ypoints[k];
 			polygon.ypoints[k] = value;
 		}
-
-		updateInternalDataStructure();
+		polygon.invalidate();
 	}
 
 	/**
@@ -341,9 +257,9 @@ class Piece implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return "Piece [id=" + id + ", polygon="
-				+ Arrays.toString(polygon.xpoints) + " "
-				+ Arrays.toString(polygon.ypoints) + ", minX=" + minX
-				+ ", maxX=" + maxX + ", minY=" + minY + ", maxY=" + maxY + "]";
+		return "Piece [id=" + id + ", polygon=" + Arrays.toString(polygon.xpoints) + " "
+				+ Arrays.toString(polygon.ypoints) + ", minX=" + polygon.getBounds().x + ", maxX="
+				+ (polygon.getBounds().x + polygon.getBounds().width - 1) + ", minY=" + polygon.getBounds().y
+				+ ", maxY=" + (polygon.getBounds().y + polygon.getBounds().height - 1) + "]";
 	}
 }

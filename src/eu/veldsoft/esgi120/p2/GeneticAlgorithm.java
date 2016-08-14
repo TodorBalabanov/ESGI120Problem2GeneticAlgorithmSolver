@@ -1,5 +1,6 @@
 package eu.veldsoft.esgi120.p2;
 
+import java.awt.Polygon;
 import java.awt.geom.Area;
 import java.util.Collections;
 import java.util.Vector;
@@ -41,22 +42,21 @@ class GeneticAlgorithm {
 	private Vector<Vector<Piece>> population = new Vector<Vector<Piece>>();
 
 	/**
-	 * Find optimal touch of a piece according front of deployed pieces.
+	 * Check for overlapping of specified piece with the others.
 	 * 
-	 * @param current
-	 *            Piece for deployment.
-	 * @param pieces
-	 *            List of pieces in the front of the deployment.
+	 * @param piece
+	 *            Piece to check for.
+	 * @param area
+	 *            All other pieces part of the filled area.
 	 * 
-	 * @return List of all pieces, which was unaccessible for the current piece
-	 *         to touch.
+	 * @return Reference to overlapped piece or null pointer if there is no
+	 *         overlapping.
 	 */
-	private Vector<Piece> touchFront(Piece current, Vector<Piece> front) {
-		Vector<Piece> untouched = new Vector<Piece>();
+	private boolean overlap(Piece piece, Area area) {
+		Area result = piece.getArea();
+		result.intersect(area);
 
-		// TODO
-
-		return untouched;
+		return result.isEmpty();
 	}
 
 	/**
@@ -90,7 +90,7 @@ class GeneticAlgorithm {
 			/*
 			 * Check for polygons overlapping.
 			 */
-			Area area = (Area) current.getArea().clone();
+			Area area = (Area) current.getArea();
 			area.intersect(piece.getArea());
 			if (area.isEmpty() == false) {
 				return piece;
@@ -150,7 +150,7 @@ class GeneticAlgorithm {
 	}
 
 	/**
-	 * Put all pices in the center of a sheet.
+	 * Put all pieces in the center of a sheet.
 	 * 
 	 * @param pieces
 	 *            List of pieces.
@@ -191,8 +191,6 @@ class GeneticAlgorithm {
 			for (Piece piece : pieces) {
 				chromosome.add((Piece) piece.clone());
 			}
-
-			Collections.shuffle(chromosome);
 
 			switch (Util.PRNG.nextInt(6)) {
 			case 0:
@@ -371,14 +369,19 @@ class GeneticAlgorithm {
 	 */
 	public void pack2(int width, int height) {
 		Vector<Piece> front = new Vector<Piece>();
-		Vector<Piece> unorderd = population.get(worstIndex);
+		// Polygon start = new Polygon();
+		// start.addPoint(0, 0);
+		// start.addPoint(width - 1, 0);
+		// start.addPoint(width - 1, 1);
+		// start.addPoint(0, 1);
+		// Area filled = new Area(start);
 
 		/*
 		 * Virtual Y boundary.
 		 */
 		int level = 0;
 
-		for (Piece current : unorderd) {
+		for (Piece current : population.get(worstIndex)) {
 			/*
 			 * Rotate on +90 or -90 degrees if the piece does not fit in the
 			 * sheet.
@@ -396,15 +399,14 @@ class GeneticAlgorithm {
 			 * Move across sheet width.
 			 */
 			while (current.getMaxX() < width) {
-				// TODO Create special overlap function to check only pieces on
-				// the front line for better efficiency.
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				Piece touch = null;
-				while (current.getMinY() > 0 && (touch = overlap(current, front)) == null) {
+				while (current.getMinY() > 0 && overlap(current, front) == null) {
 					current.moveY(-1);
 				}
+				// TODO Plus one may be is wrong if the piece should be part of
+				// the area.
 				current.moveY(+1);
 
 				/*
@@ -438,6 +440,7 @@ class GeneticAlgorithm {
 			 * Add current piece in the ordered set and the front set.
 			 */
 			front.add(current);
+			// filled.add(current.getArea());
 		}
 	}
 
@@ -513,7 +516,7 @@ class GeneticAlgorithm {
 		fitness.insertElementAt(length, worstIndex);
 		fitness.remove(worstIndex + 1);
 	}
-	
+
 	/**
 	 * Evaluate fitness value of all individuals.
 	 * 
@@ -523,7 +526,7 @@ class GeneticAlgorithm {
 	 *            Sheet height.
 	 */
 	void evaluateAll(int width, int height) {
-		for(int worstIndex=0; worstIndex<population.size(); worstIndex++) {
+		for (int worstIndex = 0; worstIndex < population.size(); worstIndex++) {
 			pack2(width, height);
 			evaluate();
 		}
