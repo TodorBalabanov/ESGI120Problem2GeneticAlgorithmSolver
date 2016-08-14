@@ -1,5 +1,6 @@
 package eu.veldsoft.esgi120.p2;
 
+import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -154,6 +155,38 @@ class Piece implements Cloneable {
 	}
 
 	/**
+	 * Piece color.
+	 * 
+	 * @return Color according piece identifier.
+	 */
+	Color color() {
+		switch (id % 10) {
+		case 0:
+			return Color.yellow;
+		case 1:
+			return Color.red;
+		case 2:
+			return Color.green;
+		case 3:
+			return Color.blue;
+		case 4:
+			return Color.cyan;
+		case 5:
+			return Color.magenta;
+		case 6:
+			return Color.orange;
+		case 7:
+			return Color.pink;
+		case 8:
+			return Color.gray;
+		case 9:
+			return Color.lightGray;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Rotate the piece on specified angle.
 	 * 
 	 * @param dr
@@ -185,7 +218,7 @@ class Piece implements Cloneable {
 			polygon.xpoints[k] = (int) Math.round(destination[l++]);
 			polygon.ypoints[k] = (int) Math.round(destination[l++]);
 		}
-		
+
 		polygon.invalidate();
 	}
 

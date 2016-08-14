@@ -12,7 +12,7 @@ public class Main {
 	/**
 	 * How many individuals to be created during optimization process.
 	 */
-	private static final long NUMBER_OF_NEW_INDIVIDUALS = 370;// 10_000_000;
+	private static final long NUMBER_OF_NEW_INDIVIDUALS = 3700;// 10_000_000;
 
 	/**
 	 * Application single entry point.

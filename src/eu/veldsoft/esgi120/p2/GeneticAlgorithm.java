@@ -56,7 +56,7 @@ class GeneticAlgorithm {
 		Area result = piece.getArea();
 		result.intersect(area);
 
-		return result.isEmpty();
+		return !result.isEmpty();
 	}
 
 	/**
@@ -368,26 +368,24 @@ class GeneticAlgorithm {
 	 *            Sheet height.
 	 */
 	public void pack2(int width, int height) {
-		Vector<Piece> front = new Vector<Piece>();
-		// Polygon start = new Polygon();
-		// start.addPoint(0, 0);
-		// start.addPoint(width - 1, 0);
-		// start.addPoint(width - 1, 1);
-		// start.addPoint(0, 1);
-		// Area filled = new Area(start);
+		// Vector<Piece> front = new Vector<Piece>();
+		Area filled = new Area(new Polygon(new int[] { 0, width - 1, width - 1, 0 }, new int[] { 0, 0, 1, 1 }, 4));
 
 		/*
 		 * Virtual Y boundary.
 		 */
-		int level = 0;
+		int level = filled.getBounds().height;
 
+		/*
+		 * Place all pieces on the sheet
+		 */
 		for (Piece current : population.get(worstIndex)) {
 			/*
 			 * Rotate on +90 or -90 degrees if the piece does not fit in the
 			 * sheet.
 			 */
 			if (current.getWidth() > width) {
-				current.turn((Util.PRNG.nextBoolean() ? 3D : 1D) * Math.PI / 2D);
+				current.flip();
 			}
 
 			int bestLeft = 0;
@@ -402,12 +400,12 @@ class GeneticAlgorithm {
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				while (current.getMinY() > 0 && overlap(current, front) == null) {
+				while (current.getMinY() > 0 && overlap(current, filled) == false) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of
 				// the area.
-				current.moveY(+1);
+				current.moveY(+2);
 
 				/*
 				 * Keep the best found position.
@@ -433,14 +431,14 @@ class GeneticAlgorithm {
 			 * Shift sheet level if the current piece is out of previous bounds.
 			 */
 			if (current.getMaxY() > level) {
-				level = current.getMaxY();
+				level = current.getMaxY() + 1;
 			}
 
 			/*
 			 * Add current piece in the ordered set and the front set.
 			 */
-			front.add(current);
-			// filled.add(current.getArea());
+			// front.add(current);
+			filled.add(current.getArea());
 		}
 	}
 

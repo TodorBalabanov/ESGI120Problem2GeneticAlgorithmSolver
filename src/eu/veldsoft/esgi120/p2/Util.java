@@ -36,22 +36,19 @@ class Util {
 		Scanner in = new Scanner(System.in);
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException(
-					"First number should be number of pieces.");
+			throw new RuntimeException("First number should be number of pieces.");
 		}
 		n = in.nextInt();
 
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException(
-					"Second number should be width of the sheet.");
+			throw new RuntimeException("Second number should be width of the sheet.");
 		}
 		X = in.nextInt();
 
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException(
-					"Third number should be height of the sheet.");
+			throw new RuntimeException("Third number should be height of the sheet.");
 		}
 		Y = in.nextInt();
 
@@ -143,10 +140,8 @@ class Util {
 	 * @param height
 	 *            Sheet height.
 	 */
-	static void saveSolution(String fileName, Vector<Piece> pieces, int width,
-			int height) {
-		BufferedImage image = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
+	static void saveSolution(String fileName, Vector<Piece> pieces, int width, int height) {
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 		Graphics g = image.getGraphics();
 
@@ -166,38 +161,7 @@ class Util {
 			g.fillPolygon(piece.getPolygon());
 			piece.moveY(-1);
 
-			switch (PRNG.nextInt(10)) {
-			case 0:
-				g.setColor(Color.yellow);
-				break;
-			case 1:
-				g.setColor(Color.red);
-				break;
-			case 2:
-				g.setColor(Color.green);
-				break;
-			case 3:
-				g.setColor(Color.blue);
-				break;
-			case 4:
-				g.setColor(Color.cyan);
-				break;
-			case 5:
-				g.setColor(Color.magenta);
-				break;
-			case 6:
-				g.setColor(Color.orange);
-				break;
-			case 7:
-				g.setColor(Color.pink);
-				break;
-			case 8:
-				g.setColor(Color.gray);
-				break;
-			case 9:
-				g.setColor(Color.lightGray);
-				break;
-			}
+			g.setColor(piece.color());
 			g.fillPolygon(piece.getPolygon());
 		}
 
