@@ -359,90 +359,6 @@ class GeneticAlgorithm {
 	}
 
 	/**
-	 * Pack function which uses exact boundaries of the polygons in the sheet
-	 * with specified dimensions.
-	 * 
-	 * @param width
-	 *            Sheet width.
-	 * @param height
-	 *            Sheet height.
-	 */
-	public void pack2(int width, int height) {
-		// Vector<Piece> front = new Vector<Piece>();
-		Area filled = new Area(new Polygon(new int[] { 0, width - 1, width - 1, 0 }, new int[] { 0, 0, 1, 1 }, 4));
-
-		/*
-		 * Virtual Y boundary.
-		 */
-		int level = filled.getBounds().height;
-
-		/*
-		 * Place all pieces on the sheet
-		 */
-		for (Piece current : population.get(worstIndex)) {
-			/*
-			 * Rotate on +90 or -90 degrees if the piece does not fit in the
-			 * sheet.
-			 */
-			if (current.getWidth() > width) {
-				current.flip();
-			}
-
-			int bestLeft = 0;
-			int bestTop = level;
-			current.moveX(-current.getMinX());
-			current.moveY(-current.getMinY() + level);
-
-			/*
-			 * Move across sheet width.
-			 */
-			while (current.getMaxX() < width) {
-				/*
-				 * Touch sheet bounds of touch other piece.
-				 */
-				while (current.getMinY() > 0 && overlap(current, filled) == false) {
-					current.moveY(-1);
-				}
-				// TODO Plus one may be is wrong if the piece should be part of
-				// the area.
-				current.moveY(+2);
-
-				/*
-				 * Keep the best found position.
-				 */
-				if (current.getMinY() < bestTop) {
-					bestTop = current.getMinY();
-					bestLeft = current.getMinX();
-				}
-
-				/*
-				 * Try next position on right.
-				 */
-				current.moveX(+1);
-			}
-
-			/*
-			 * Put the piece in the best available coordinates.
-			 */
-			current.moveX(-current.getMinX() + bestLeft);
-			current.moveY(-current.getMinY() + bestTop);
-
-			/*
-			 * Shift sheet level if the current piece is out of previous bounds.
-			 */
-			if (current.getMaxY() > level) {
-				level = current.getMaxY() + 1;
-			}
-
-			/*
-			 * Add current piece in the ordered set and the front set.
-			 */
-			// front.add(current);
-			filled.add(current.getArea());
-		}
-	}
-
-	/**
 	 * Pack function which uses bounding rectangle of the polygons in the sheet
 	 * with specified dimensions.
 	 * 
@@ -503,6 +419,91 @@ class GeneticAlgorithm {
 				}
 			}
 			x += piece.getWidth();
+		}
+	}
+
+	/**
+	 * Pack function which uses exact boundaries of the polygons in the sheet
+	 * with specified dimensions.
+	 * 
+	 * @param width
+	 *            Sheet width.
+	 * @param height
+	 *            Sheet height.
+	 */
+	public void pack2(int width, int height) {
+		Vector<Piece> front = new Vector<Piece>();
+		//Area filled = new Area(new Polygon(new int[] { 0, width - 1, width - 1, 0 }, new int[] { 0, 0, 1, 1 }, 4));
+
+		/*
+		 * Virtual Y boundary.
+		 */
+		int level = 0;
+		//int level = filled.getBounds().height;
+
+		/*
+		 * Place all pieces on the sheet
+		 */
+		for (Piece current : population.get(worstIndex)) {
+			/*
+			 * Rotate on +90 or -90 degrees if the piece does not fit in the
+			 * sheet.
+			 */
+			if (current.getWidth() > width) {
+				current.flip();
+			}
+
+			int bestLeft = 0;
+			int bestTop = level;
+			current.moveX(-current.getMinX());
+			current.moveY(-current.getMinY() + level);
+
+			/*
+			 * Move across sheet width.
+			 */
+			while (current.getMaxX() < width) {
+				/*
+				 * Touch sheet bounds of touch other piece.
+				 */
+				while (current.getMinY() > 0 && overlap(current, front) == null) {
+					current.moveY(-1);
+				}
+				// TODO Plus one may be is wrong if the piece should be part of
+				// the area.
+				current.moveY(+2);
+
+				/*
+				 * Keep the best found position.
+				 */
+				if (current.getMinY() < bestTop) {
+					bestTop = current.getMinY();
+					bestLeft = current.getMinX();
+				}
+
+				/*
+				 * Try next position on right.
+				 */
+				current.moveX(+1);
+			}
+
+			/*
+			 * Put the piece in the best available coordinates.
+			 */
+			current.moveX(-current.getMinX() + bestLeft);
+			current.moveY(-current.getMinY() + bestTop);
+
+			/*
+			 * Shift sheet level if the current piece is out of previous bounds.
+			 */
+			if (current.getMaxY() > level) {
+				level = current.getMaxY() + 1;
+			}
+
+			/*
+			 * Add current piece in the ordered set and the front set.
+			 */
+			front.add(current);
+			//filled.add(current.getArea());
 		}
 	}
 

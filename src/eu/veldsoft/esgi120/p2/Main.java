@@ -17,7 +17,7 @@ public class Main {
 	/**
 	 * How often to save temporary bitmap file.
 	 */
-	private static final long TEMP_FILE_SAVE_INTERVAL = 1000 * 60 * 10;
+	private static final long TEMP_FILE_SAVE_INTERVAL = 1000 * 60 * 2;
 
 	/**
 	 * Application single entry point.
@@ -65,8 +65,8 @@ public class Main {
 			ga.select();
 			ga.crossover();
 			ga.mutate();
-			// TODO Use pack2 for better packing.
-			ga.pack1(X, Y);
+			// TODO Use pack2 for better or pack1 for faster packing.
+			ga.pack2(X, Y);
 			ga.evaluate();
 		}
 		System.out.println();
