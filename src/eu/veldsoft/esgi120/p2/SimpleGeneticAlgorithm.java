@@ -10,7 +10,7 @@ import java.util.Vector;
  * 
  * @author Todor Balabanov
  */
-class GeneticAlgorithm {
+class SimpleGeneticAlgorithm {
 	/**
 	 * First parent.
 	 */
@@ -57,47 +57,6 @@ class GeneticAlgorithm {
 		result.intersect(area);
 
 		return !result.isEmpty();
-	}
-
-	/**
-	 * Check for overlapping of specified piece with the others.
-	 * 
-	 * @param current
-	 *            Piece to check for.
-	 * @param pieces
-	 *            All other pieces.
-	 * 
-	 * @return Reference to overlapped piece or null pointer if there is no
-	 *         overlapping.
-	 */
-	private Piece overlap(Piece current, Vector<Piece> pieces) {
-		for (Piece piece : pieces) {
-			/*
-			 * The piece can not overlap with itself.
-			 */
-			if (current == piece) {
-				continue;
-			}
-
-			/*
-			 * If bound rectangles do not overlap the pieces do not overlap.
-			 */
-			if (current.getMaxX() < piece.getMinX() || piece.getMaxX() < current.getMinX()
-					|| current.getMaxY() < piece.getMinY() || piece.getMaxY() < current.getMinY()) {
-				continue;
-			}
-
-			/*
-			 * Check for polygons overlapping.
-			 */
-			Area area = (Area) current.getArea();
-			area.intersect(piece.getArea());
-			if (area.isEmpty() == false) {
-				return piece;
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -174,7 +133,7 @@ class GeneticAlgorithm {
 	 * @param pieces
 	 *            Initial pieces to initialize population.
 	 */
-	GeneticAlgorithm(int size, Vector<Piece> pieces) {
+	SimpleGeneticAlgorithm(int size, Vector<Piece> pieces) {
 		/*
 		 * At least 4 elements should be available in order random index
 		 * selection to work.
@@ -351,7 +310,7 @@ class GeneticAlgorithm {
 		for (Piece piece : result) {
 			while (piece.getMinX() < 0 || piece.getMaxX() >= width || piece.getMinY() < 0
 					|| piece.getMaxY() + piece.getHeight() >= height
-					|| overlap(piece, population.get(worstIndex)) != null) {
+					|| Util.overlap(piece, population.get(worstIndex)) != null) {
 				piece.moveX(Util.PRNG.nextInt(width - piece.getWidth()));
 				piece.moveY(Util.PRNG.nextInt(height - piece.getHeight()));
 			}
@@ -465,7 +424,7 @@ class GeneticAlgorithm {
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				while (current.getMinY() > 0 && overlap(current, front) == null) {
+				while (current.getMinY() > 0 && Util.overlap(current, front) == null) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of

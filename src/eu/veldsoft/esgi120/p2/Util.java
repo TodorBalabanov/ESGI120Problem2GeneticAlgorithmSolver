@@ -2,6 +2,7 @@ package eu.veldsoft.esgi120.p2;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,73 @@ class Util {
 	 * Pseudo-random number generator instance.
 	 */
 	static final Random PRNG = new Random();
+	
+	/**
+	 * 
+	 */
+	static final double CROSSOVER_RATE = 0.9;
 
+	/**
+	 * 
+	 */
+	static final double MUTATION_RATE = 0.03;
+
+	/**
+	 * 
+	 */
+	static final double ELITISM_RATE = 0.1;
+
+	/**
+	 * 
+	 */
+	static final int TOURNAMENT_ARITY = 2;
+	
+	/**
+	 * 
+	 */
+	static final long OPTIMIZATION_TIMEOUT_SECONDS = 15 * 60 * 1;
+
+	/**
+	 * Check for overlapping of specified piece with the others.
+	 * 
+	 * @param current
+	 *            Piece to check for.
+	 * @param pieces
+	 *            All other pieces.
+	 * 
+	 * @return Reference to overlapped piece or null pointer if there is no
+	 *         overlapping.
+	 */
+	static Piece overlap(Piece current, Vector<Piece> pieces) {
+		for (Piece piece : pieces) {
+			/*
+			 * The piece can not overlap with itself.
+			 */
+			if (current == piece) {
+				continue;
+			}
+
+			/*
+			 * If bound rectangles do not overlap the pieces do not overlap.
+			 */
+			if (current.getMaxX() < piece.getMinX() || piece.getMaxX() < current.getMinX()
+					|| current.getMaxY() < piece.getMinY() || piece.getMaxY() < current.getMinY()) {
+				continue;
+			}
+
+			/*
+			 * Check for polygons overlapping.
+			 */
+			Area area = (Area) current.getArea();
+			area.intersect(piece.getArea());
+			if (area.isEmpty() == false) {
+				return piece;
+			}
+		}
+
+		return null;
+	}
+	
 	/**
 	 * Read input data as points coordinates.
 	 * 

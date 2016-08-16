@@ -1,18 +1,24 @@
 package eu.veldsoft.esgi120.p2;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
+
+import org.apache.commons.math3.genetics.FixedElapsedTime;
+import org.apache.commons.math3.genetics.GeneticAlgorithm;
+import org.apache.commons.math3.genetics.Population;
+import org.apache.commons.math3.genetics.TournamentSelection;
 
 public class Main {
 	/**
 	 * Population size.
 	 */
-	private static final int POPULATION_SIZE = 37;
+	private static final int POPULATION_SIZE = 7;
 
 	/**
 	 * How many individuals to be created during optimization process.
 	 */
-	private static final long NUMBER_OF_NEW_INDIVIDUALS = 370_000;// 10_000_000;
+	private static final long NUMBER_OF_NEW_INDIVIDUALS = 7;// 10_000_000;
 
 	/**
 	 * How often to save temporary bitmap file.
@@ -20,20 +26,15 @@ public class Main {
 	private static final long TEMP_FILE_SAVE_INTERVAL = 1000 * 60 * 2;
 
 	/**
-	 * Application single entry point.
 	 * 
-	 * @param args
-	 *            Command line arguments.
+	 * @param X
+	 * @param Y
+	 * @param pieces
 	 */
-	public static void main(String[] args) {
-		Object data[] = Util.readInputByCoordinates();
-
-		Vector<Piece> pieces = (Vector<Piece>) data[0];
-		int X = (Integer) data[1];
-		int Y = (Integer) data[2];
-
+	private static void optimization1(int X, int Y, Vector<Piece> pieces) {
 		System.err.println("Start ...");
-		GeneticAlgorithm ga = new GeneticAlgorithm(POPULATION_SIZE, pieces);
+		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(POPULATION_SIZE,
+				pieces);
 		System.err.println("Genetic algorithm crated ...");
 		ga.evaluateAll(X, Y);
 		System.err.println("Initial population evaluated ...");
@@ -54,11 +55,12 @@ public class Main {
 			 */
 			if (System.currentTimeMillis() - last >= TEMP_FILE_SAVE_INTERVAL) {
 				last = System.currentTimeMillis();
-				Util.saveSolution(
-						"time" + (new Date()).getTime() + "progress" + (int) (100D * g / NUMBER_OF_NEW_INDIVIDUALS)
-								+ "fitness" + (int) Math.ceil(ga.getBestFitness()) + ".bmp",
-						ga.getBest(), X, Y);
-				System.out.println("" + (new Date()).getTime() + "\t" + (100D * g / NUMBER_OF_NEW_INDIVIDUALS) + "\t"
+				Util.saveSolution("time" + (new Date()).getTime() + "progress"
+						+ (int) (100D * g / NUMBER_OF_NEW_INDIVIDUALS)
+						+ "fitness" + (int) Math.ceil(ga.getBestFitness())
+						+ ".bmp", ga.getBest(), X, Y);
+				System.out.println("" + (new Date()).getTime() + "\t"
+						+ (100D * g / NUMBER_OF_NEW_INDIVIDUALS) + "\t"
 						+ ga.getBestFitness());
 			}
 
@@ -72,7 +74,46 @@ public class Main {
 		System.out.println();
 
 		ga.findBestAndWorst();
-		Util.saveSolution("" + (new Date()).getTime() + ".bmp", ga.getBest(), X, Y);
+		Util.saveSolution("" + (new Date()).getTime() + ".bmp", ga.getBest(),
+				X, Y);
 		System.out.println(ga.getBestFitness());
+	}
+
+	/**
+	 * 
+	 * @param X
+	 * @param Y
+	 * @param plates
+	 */
+	private static void optimization2(int X, int Y, Vector<Piece> plates) {
+		//TODO Initialize population.
+		Population initial = null;// Util.randomInitialPopulation(X, Y, plates);
+
+		GeneticAlgorithm algorithm = new GeneticAlgorithm(
+				new PieceOrderedCrossover(), Util.CROSSOVER_RATE,
+				new RandomPieceMutation(), Util.MUTATION_RATE,
+				new TournamentSelection(Util.TOURNAMENT_ARITY));
+		Population optimized = algorithm.evolve(initial, new FixedElapsedTime(
+				Util.OPTIMIZATION_TIMEOUT_SECONDS));
+
+		List<Piece> pieces = ((PieceListChromosome) optimized
+				.getFittestChromosome()).getPieces();
+	}
+
+	/**
+	 * Application single entry point.
+	 * 
+	 * @param args
+	 *            Command line arguments.
+	 */
+	public static void main(String[] args) {
+		Object data[] = Util.readInputByCoordinates();
+
+		Vector<Piece> pieces = (Vector<Piece>) data[0];
+		int X = (Integer) data[1];
+		int Y = (Integer) data[2];
+
+		// optimization1(X, Y, pieces);
+		optimization2(X, Y, pieces);
 	}
 }
