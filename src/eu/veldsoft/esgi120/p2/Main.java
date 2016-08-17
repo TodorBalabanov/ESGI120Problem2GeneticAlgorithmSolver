@@ -10,10 +10,6 @@ import org.apache.commons.math3.genetics.Population;
 import org.apache.commons.math3.genetics.TournamentSelection;
 
 public class Main {
-	/**
-	 * Population size.
-	 */
-	private static final int POPULATION_SIZE = 7;
 
 	/**
 	 * How many individuals to be created during optimization process.
@@ -33,7 +29,7 @@ public class Main {
 	 */
 	private static void optimization1(int X, int Y, Vector<Piece> pieces) {
 		System.err.println("Start ...");
-		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(POPULATION_SIZE,
+		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(Util.POPULATION_SIZE,
 				pieces);
 		System.err.println("Genetic algorithm crated ...");
 		ga.evaluateAll(X, Y);
@@ -87,7 +83,9 @@ public class Main {
 	 */
 	private static void optimization2(int X, int Y, Vector<Piece> plates) {
 		//TODO Initialize population.
-		Population initial = null;// Util.randomInitialPopulation(X, Y, plates);
+		PieceListChromosome.width = X;
+		PieceListChromosome.height = Y;
+		Population initial = Util.randomInitialPopulation(X, Y, plates);
 
 		GeneticAlgorithm algorithm = new GeneticAlgorithm(
 				new PieceOrderedCrossover(), Util.CROSSOVER_RATE,
@@ -98,6 +96,8 @@ public class Main {
 
 		List<Piece> pieces = ((PieceListChromosome) optimized
 				.getFittestChromosome()).getPieces();
+		Util.saveSolution("" + (new Date()).getTime() + "_" + (int)(optimized.getFittestChromosome().fitness()) + ".bmp", pieces,
+				X, Y);
 	}
 
 	/**

@@ -6,11 +6,17 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
+
+import org.apache.commons.math3.genetics.Chromosome;
+import org.apache.commons.math3.genetics.ElitisticListPopulation;
+import org.apache.commons.math3.genetics.Population;
 
 /**
  * Utilities class.
@@ -22,7 +28,12 @@ class Util {
 	 * Pseudo-random number generator instance.
 	 */
 	static final Random PRNG = new Random();
-	
+
+	/**
+	 * Population size.
+	 */
+	static final int POPULATION_SIZE = 17;
+
 	/**
 	 * 
 	 */
@@ -42,11 +53,77 @@ class Util {
 	 * 
 	 */
 	static final int TOURNAMENT_ARITY = 2;
-	
+
 	/**
 	 * 
 	 */
-	static final long OPTIMIZATION_TIMEOUT_SECONDS = 15 * 60 * 1;
+	static final long OPTIMIZATION_TIMEOUT_SECONDS = 45 * 60 * 1;
+
+	/**
+	 * Flip all pieces to be landscape.
+	 * 
+	 * @param pieces
+	 *            All pieces.
+	 */
+	static void allLandscape(Vector<Piece> pieces) {
+		/*
+		 * Rotate all pieces.
+		 */
+		for (Piece piece : pieces) {
+			if (piece.getWidth() < piece.getHeight()) {
+				piece.flip();
+			}
+		}
+	}
+
+	/**
+	 * Flip all pieces to be portrait.
+	 * 
+	 * @param pieces
+	 *            All pieces.
+	 */
+	static void allPortrait(Vector<Piece> pieces) {
+		/*
+		 * Rotate all pieces.
+		 */
+		for (Piece piece : pieces) {
+			if (piece.getWidth() > piece.getHeight()) {
+				piece.flip();
+			}
+		}
+	}
+
+	/**
+	 * Rotate all pieces on random angle.
+	 * 
+	 * @param pieces
+	 *            All pieces.
+	 */
+	static void allAtRandomAngle(Vector<Piece> pieces) {
+		/*
+		 * Rotate all pieces.
+		 */
+		for (Piece piece : pieces) {
+			piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
+		}
+	}
+
+	/**
+	 * Put all pieces in the center of a sheet.
+	 * 
+	 * @param pieces
+	 *            List of pieces.
+	 * @param width
+	 *            Width of the sheet.
+	 * @param height
+	 *            Height of the sheet.
+	 */
+	private void allCenter(Vector<Piece> pieces, int width, int height) {
+		for (Piece piece : pieces) {
+			piece.moveX(-piece.getMinX() + width / 2 - piece.getWidth() / 2);
+			piece.moveY(-piece.getMinY() + height / 2 - piece.getHeight() / 2);
+		}
+	}
 
 	/**
 	 * Check for overlapping of specified piece with the others.
@@ -88,7 +165,7 @@ class Util {
 
 		return null;
 	}
-	
+
 	/**
 	 * Read input data as points coordinates.
 	 * 
@@ -207,7 +284,7 @@ class Util {
 	 * @param height
 	 *            Sheet height.
 	 */
-	static void saveSolution(String fileName, Vector<Piece> pieces, int width, int height) {
+	static void saveSolution(String fileName, List<Piece> pieces, int width, int height) {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 		Graphics g = image.getGraphics();
@@ -238,5 +315,86 @@ class Util {
 		}
 
 		g.dispose();
+	}
+
+	/**
+	 * 
+	 * @param width
+	 * @param height
+	 * @param plates
+	 * @return
+	 */
+	public static Population randomInitialPopulation(int width, int height, List<Piece> plates) {
+		List<Chromosome> list = new Vector<Chromosome>();
+		for (int i = 0; i < POPULATION_SIZE; i++) {
+			/*
+			 * Deep copy of the plates.
+			 */
+			Vector<Piece> chromosome = new Vector<Piece>();
+			for (Piece piece : plates) {
+				chromosome.add((Piece) piece.clone());
+			}
+
+			/*
+			 * Rotate pieces in some of the cases.
+			 */
+			switch (Util.PRNG.nextInt(6)) {
+			case 0:
+			case 1:
+			case 2:
+				/* Unchanged. */
+				break;
+			case 3:
+				Util.allLandscape(chromosome);
+				break;
+			case 4:
+				Util.allPortrait(chromosome);
+				break;
+			case 5:
+				Util.allAtRandomAngle(chromosome);
+				break;
+			}
+
+			/*
+			 * Sort pieces in some of the cases.
+			 */
+			switch (Util.PRNG.nextInt(12)) {
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				/* Unchanged. */
+				break;
+			case 5:
+				Collections.shuffle(chromosome);
+				break;
+			case 6:
+				Collections.sort(chromosome, new WidthComparator());
+				break;
+			case 7:
+				Collections.sort(chromosome, Collections.reverseOrder(new WidthComparator()));
+				break;
+			case 8:
+				Collections.sort(chromosome, new HeightComparator());
+				break;
+			case 9:
+				Collections.sort(chromosome, Collections.reverseOrder(new HeightComparator()));
+				break;
+			case 10:
+				Collections.sort(chromosome, new BoundRectangleDimensionsComparator());
+				break;
+			case 11:
+				Collections.sort(chromosome, Collections.reverseOrder(new BoundRectangleDimensionsComparator()));
+				break;
+			}
+		
+			/*
+			 * Add to initial list.
+			 */
+			list.add(new PieceListChromosome(chromosome));
+		}
+		
+		return new ElitisticListPopulation(list, 2 * list.size(), ELITISM_RATE);
 	}
 }

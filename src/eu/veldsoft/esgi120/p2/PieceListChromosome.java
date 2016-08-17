@@ -12,16 +12,15 @@ import org.apache.commons.math3.genetics.InvalidRepresentationException;
  * @author Todor Balabanov
  */
 public class PieceListChromosome extends AbstractListChromosome<Piece> {
+	/**
+	 * 
+	 */
+	static int width = 0;
 
 	/**
 	 * 
 	 */
-	private int width = 0;
-
-	/**
-	 * 
-	 */
-	private int height = 0;
+	static int height = 0;
 
 	/**
 	 * 
@@ -165,5 +164,4 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	public List<Piece> getPieces() {
 		return getRepresentation();
 	}
-
 }

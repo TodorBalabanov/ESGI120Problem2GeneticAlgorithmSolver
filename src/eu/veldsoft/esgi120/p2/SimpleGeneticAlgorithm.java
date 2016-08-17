@@ -60,72 +60,6 @@ class SimpleGeneticAlgorithm {
 	}
 
 	/**
-	 * Flip all pieces to be landscape.
-	 * 
-	 * @param pieces
-	 *            All pieces.
-	 */
-	private void allLandscape(Vector<Piece> pieces) {
-		/*
-		 * Rotate all pieces.
-		 */
-		for (Piece piece : pieces) {
-			if (piece.getWidth() < piece.getHeight()) {
-				piece.flip();
-			}
-		}
-	}
-
-	/**
-	 * Flip all pieces to be portrait.
-	 * 
-	 * @param pieces
-	 *            All pieces.
-	 */
-	private void allPortrait(Vector<Piece> pieces) {
-		/*
-		 * Rotate all pieces.
-		 */
-		for (Piece piece : pieces) {
-			if (piece.getWidth() > piece.getHeight()) {
-				piece.flip();
-			}
-		}
-	}
-
-	/**
-	 * Rotate all pieces on random angle.
-	 * 
-	 * @param pieces
-	 *            All pieces.
-	 */
-	private void allAtRandomAngle(Vector<Piece> pieces) {
-		/*
-		 * Rotate all pieces.
-		 */
-		for (Piece piece : pieces) {
-			piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
-		}
-	}
-
-	/**
-	 * Put all pieces in the center of a sheet.
-	 * 
-	 * @param pieces
-	 *            List of pieces.
-	 * @param width
-	 *            Width of the sheet.
-	 * @param height
-	 *            Height of the sheet.
-	 */
-	private void allCenter(Vector<Piece> pieces, int width, int height) {
-		for (Piece piece : pieces) {
-			piece.moveX(-piece.getMinX() + width / 2 - piece.getWidth() / 2);
-			piece.moveY(-piece.getMinY() + height / 2 - piece.getHeight() / 2);
-		}
-	}
-
-	/**
 	 * Constructor with parameters.
 	 * 
 	 * @param size
@@ -155,13 +89,13 @@ class SimpleGeneticAlgorithm {
 			case 0:
 			case 1:
 			case 2:
-				allAtRandomAngle(chromosome);
+				Util.allAtRandomAngle(chromosome);
 				break;
 			case 3:
-				allLandscape(chromosome);
+				Util.allLandscape(chromosome);
 				break;
 			case 4:
-				allPortrait(chromosome);
+				Util.allPortrait(chromosome);
 				break;
 			case 5:
 				/* Unchanged. */
