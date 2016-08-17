@@ -79,7 +79,7 @@ public class Main {
 	 * @param plates
 	 */
 	private static void optimization2(int X, int Y, Vector<Piece> plates) {
-		System.err.println("Start ...");
+		System.err.println("Optimization start ...");
 		PieceListChromosome.width = X;
 		PieceListChromosome.height = Y;
 		Population initial = Util.randomInitialPopulation(X, Y, plates);
