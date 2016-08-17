@@ -1,9 +1,9 @@
 package eu.veldsoft.esgi120.p2;
 
-import java.awt.Polygon;
 import java.awt.geom.Area;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Genetic algorithm implementation.
@@ -34,12 +34,12 @@ class SimpleGeneticAlgorithm {
 	/**
 	 * Fitness values of the individuals.
 	 */
-	private Vector<Double> fitness = new Vector<Double>();
+	private List<Double> fitness = new ArrayList<Double>();
 
 	/**
 	 * Population individuals.
 	 */
-	private Vector<Vector<Piece>> population = new Vector<Vector<Piece>>();
+	private List<List<Piece>> population = new ArrayList<List<Piece>>();
 
 	/**
 	 * Check for overlapping of specified piece with the others.
@@ -67,7 +67,7 @@ class SimpleGeneticAlgorithm {
 	 * @param pieces
 	 *            Initial pieces to initialize population.
 	 */
-	SimpleGeneticAlgorithm(int size, Vector<Piece> pieces) {
+	SimpleGeneticAlgorithm(int size, List<Piece> pieces) {
 		/*
 		 * At least 4 elements should be available in order random index
 		 * selection to work.
@@ -80,7 +80,7 @@ class SimpleGeneticAlgorithm {
 		 * Initialize individuals.
 		 */
 		for (int p = 0; p < size; p++) {
-			Vector<Piece> chromosome = new Vector<Piece>();
+			List<Piece> chromosome = new ArrayList<Piece>();
 			for (Piece piece : pieces) {
 				chromosome.add((Piece) piece.clone());
 			}
@@ -145,7 +145,7 @@ class SimpleGeneticAlgorithm {
 	 * 
 	 * @return List of pieces in the best individual.
 	 */
-	Vector<Piece> getBest() {
+	List<Piece> getBest() {
 		return population.get(bestIndex);
 	}
 
@@ -189,14 +189,14 @@ class SimpleGeneticAlgorithm {
 	 * Genetic algorithm crossover operator.
 	 */
 	void crossover() {
-		Vector<Piece> first = population.get(firstIndex);
-		Vector<Piece> second = population.get(secondIndex);
-		Vector<Piece> result = population.get(worstIndex);
+		List<Piece> first = population.get(firstIndex);
+		List<Piece> second = population.get(secondIndex);
+		List<Piece> result = population.get(worstIndex);
 
 		result.clear();
 
 		for (int i = Util.PRNG.nextInt(first.size()); i >= 0; i--) {
-			result.add((Piece) first.elementAt(i).clone());
+			result.add((Piece) first.get(i).clone());
 		}
 
 		for (Piece piece : second) {
@@ -212,9 +212,9 @@ class SimpleGeneticAlgorithm {
 	 * Genetic algorithm mutation operator.
 	 */
 	void mutate() {
-		Vector<Piece> result = population.get(worstIndex);
+		List<Piece> result = population.get(worstIndex);
 
-		Piece piece = result.elementAt(Util.PRNG.nextInt(result.size()));
+		Piece piece = result.get(Util.PRNG.nextInt(result.size()));
 
 		// TODO Find better way to select random angle.
 		if (Util.PRNG.nextBoolean() == true) {
@@ -239,7 +239,7 @@ class SimpleGeneticAlgorithm {
 	 *            Sheet height.
 	 */
 	void bound(int width, int height) {
-		Vector<Piece> result = population.get(worstIndex);
+		List<Piece> result = population.get(worstIndex);
 
 		for (Piece piece : result) {
 			while (piece.getMinX() < 0 || piece.getMaxX() >= width || piece.getMinY() < 0
@@ -266,7 +266,7 @@ class SimpleGeneticAlgorithm {
 		for (int i = 0; i < level.length; i++) {
 			level[i] = 0;
 		}
-		
+
 		/*
 		 * Insure pieces width according sheet width.
 		 */
@@ -325,14 +325,15 @@ class SimpleGeneticAlgorithm {
 	 *            Sheet height.
 	 */
 	public void pack2(int width, int height) {
-		Vector<Piece> front = new Vector<Piece>();
-		//Area filled = new Area(new Polygon(new int[] { 0, width - 1, width - 1, 0 }, new int[] { 0, 0, 1, 1 }, 4));
+		List<Piece> front = new ArrayList<Piece>();
+		// Area filled = new Area(new Polygon(new int[] { 0, width - 1, width -
+		// 1, 0 }, new int[] { 0, 0, 1, 1 }, 4));
 
 		/*
 		 * Virtual Y boundary.
 		 */
 		int level = 0;
-		//int level = filled.getBounds().height;
+		// int level = filled.getBounds().height;
 
 		/*
 		 * Place all pieces on the sheet
@@ -396,7 +397,7 @@ class SimpleGeneticAlgorithm {
 			 * Add current piece in the ordered set and the front set.
 			 */
 			front.add(current);
-			//filled.add(current.getArea());
+			// filled.add(current.getArea());
 		}
 	}
 
@@ -404,7 +405,7 @@ class SimpleGeneticAlgorithm {
 	 * Evaluate fitness value of the new created individual.
 	 */
 	void evaluate() {
-		Vector<Piece> result = population.get(worstIndex);
+		List<Piece> result = population.get(worstIndex);
 
 		/*
 		 * Measure length as fitness value.
@@ -416,7 +417,7 @@ class SimpleGeneticAlgorithm {
 			}
 		}
 
-		fitness.insertElementAt(length, worstIndex);
+		fitness.add(worstIndex, length);
 		fitness.remove(worstIndex + 1);
 	}
 

@@ -6,11 +6,11 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -65,7 +65,7 @@ class Util {
 	 * @param pieces
 	 *            All pieces.
 	 */
-	static void allLandscape(Vector<Piece> pieces) {
+	static void allLandscape(List<Piece> pieces) {
 		/*
 		 * Rotate all pieces.
 		 */
@@ -82,7 +82,7 @@ class Util {
 	 * @param pieces
 	 *            All pieces.
 	 */
-	static void allPortrait(Vector<Piece> pieces) {
+	static void allPortrait(List<Piece> pieces) {
 		/*
 		 * Rotate all pieces.
 		 */
@@ -99,7 +99,7 @@ class Util {
 	 * @param pieces
 	 *            All pieces.
 	 */
-	static void allAtRandomAngle(Vector<Piece> pieces) {
+	static void allAtRandomAngle(List<Piece> pieces) {
 		/*
 		 * Rotate all pieces.
 		 */
@@ -118,7 +118,7 @@ class Util {
 	 * @param height
 	 *            Height of the sheet.
 	 */
-	private void allCenter(Vector<Piece> pieces, int width, int height) {
+	private void allCenter(List<Piece> pieces, int width, int height) {
 		for (Piece piece : pieces) {
 			piece.moveX(-piece.getMinX() + width / 2 - piece.getWidth() / 2);
 			piece.moveY(-piece.getMinY() + height / 2 - piece.getHeight() / 2);
@@ -136,7 +136,7 @@ class Util {
 	 * @return Reference to overlapped piece or null pointer if there is no
 	 *         overlapping.
 	 */
-	static Piece overlap(Piece current, Vector<Piece> pieces) {
+	static Piece overlap(Piece current, List<Piece> pieces) {
 		for (Piece piece : pieces) {
 			/*
 			 * The piece can not overlap with itself.
@@ -175,7 +175,7 @@ class Util {
 		int n;
 		int X;
 		int Y;
-		Vector<Piece> pieces = new Vector<Piece>();
+		List<Piece> pieces = new ArrayList<Piece>();
 
 		Scanner in = new Scanner(System.in);
 		if (in.hasNextInt() == false) {
@@ -325,12 +325,12 @@ class Util {
 	 * @return
 	 */
 	public static Population randomInitialPopulation(int width, int height, List<Piece> plates) {
-		List<Chromosome> list = new Vector<Chromosome>();
+		List<Chromosome> list = new ArrayList<Chromosome>();
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			/*
 			 * Deep copy of the plates.
 			 */
-			Vector<Piece> chromosome = new Vector<Piece>();
+			List<Piece> chromosome = new ArrayList<Piece>();
 			for (Piece piece : plates) {
 				chromosome.add((Piece) piece.clone());
 			}
@@ -388,13 +388,13 @@ class Util {
 				Collections.sort(chromosome, Collections.reverseOrder(new BoundRectangleDimensionsComparator()));
 				break;
 			}
-		
+
 			/*
 			 * Add to initial list.
 			 */
 			list.add(new PieceListChromosome(chromosome));
 		}
-		
+
 		return new ElitisticListPopulation(list, 2 * list.size(), ELITISM_RATE);
 	}
 }

@@ -2,7 +2,6 @@ package eu.veldsoft.esgi120.p2;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.math3.genetics.FixedElapsedTime;
 import org.apache.commons.math3.genetics.GeneticAlgorithm;
@@ -27,7 +26,7 @@ public class Main {
 	 * @param Y
 	 * @param pieces
 	 */
-	private static void optimization1(int X, int Y, Vector<Piece> pieces) {
+	private static void optimization1(int X, int Y, List<Piece> pieces) {
 		System.err.println("Start ...");
 		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(Util.POPULATION_SIZE, pieces);
 		System.err.println("Genetic algorithm crated ...");
@@ -78,7 +77,7 @@ public class Main {
 	 * @param Y
 	 * @param plates
 	 */
-	private static void optimization2(int X, int Y, Vector<Piece> plates) {
+	private static void optimization2(int X, int Y, List<Piece> plates) {
 		System.err.println("Optimization start ...");
 		PieceListChromosome.width = X;
 		PieceListChromosome.height = Y;
@@ -108,7 +107,7 @@ public class Main {
 		Object data[] = Util.readInputByCoordinates();
 		System.err.println("Data read ...");
 
-		Vector<Piece> pieces = (Vector<Piece>) data[0];
+		List<Piece> pieces = (List<Piece>) data[0];
 		int X = (Integer) data[1];
 		int Y = (Integer) data[2];
 
