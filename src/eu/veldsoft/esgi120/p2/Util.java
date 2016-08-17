@@ -32,7 +32,7 @@ class Util {
 	/**
 	 * Population size.
 	 */
-	static final int POPULATION_SIZE = 17;
+	static final int POPULATION_SIZE = 37;
 
 	/**
 	 * 
@@ -57,7 +57,7 @@ class Util {
 	/**
 	 * 
 	 */
-	static final long OPTIMIZATION_TIMEOUT_SECONDS = 45 * 60 * 1;
+	static final long OPTIMIZATION_TIMEOUT_SECONDS = 12 * 60 * 60 * 1;
 
 	/**
 	 * Flip all pieces to be landscape.

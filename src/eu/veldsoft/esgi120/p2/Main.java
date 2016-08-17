@@ -29,8 +29,7 @@ public class Main {
 	 */
 	private static void optimization1(int X, int Y, Vector<Piece> pieces) {
 		System.err.println("Start ...");
-		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(Util.POPULATION_SIZE,
-				pieces);
+		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(Util.POPULATION_SIZE, pieces);
 		System.err.println("Genetic algorithm crated ...");
 		ga.evaluateAll(X, Y);
 		System.err.println("Initial population evaluated ...");
@@ -51,12 +50,11 @@ public class Main {
 			 */
 			if (System.currentTimeMillis() - last >= TEMP_FILE_SAVE_INTERVAL) {
 				last = System.currentTimeMillis();
-				Util.saveSolution("time" + (new Date()).getTime() + "progress"
-						+ (int) (100D * g / NUMBER_OF_NEW_INDIVIDUALS)
-						+ "fitness" + (int) Math.ceil(ga.getBestFitness())
-						+ ".bmp", ga.getBest(), X, Y);
-				System.out.println("" + (new Date()).getTime() + "\t"
-						+ (100D * g / NUMBER_OF_NEW_INDIVIDUALS) + "\t"
+				Util.saveSolution(
+						"time" + (new Date()).getTime() + "progress" + (int) (100D * g / NUMBER_OF_NEW_INDIVIDUALS)
+								+ "fitness" + (int) Math.ceil(ga.getBestFitness()) + ".bmp",
+						ga.getBest(), X, Y);
+				System.out.println("" + (new Date()).getTime() + "\t" + (100D * g / NUMBER_OF_NEW_INDIVIDUALS) + "\t"
 						+ ga.getBestFitness());
 			}
 
@@ -70,8 +68,7 @@ public class Main {
 		System.out.println();
 
 		ga.findBestAndWorst();
-		Util.saveSolution("" + (new Date()).getTime() + ".bmp", ga.getBest(),
-				X, Y);
+		Util.saveSolution("" + (new Date()).getTime() + ".bmp", ga.getBest(), X, Y);
 		System.out.println(ga.getBestFitness());
 	}
 
@@ -82,22 +79,23 @@ public class Main {
 	 * @param plates
 	 */
 	private static void optimization2(int X, int Y, Vector<Piece> plates) {
-		//TODO Initialize population.
+		System.err.println("Start ...");
 		PieceListChromosome.width = X;
 		PieceListChromosome.height = Y;
 		Population initial = Util.randomInitialPopulation(X, Y, plates);
+		System.err.println("Initial population evaluated ...");
 
-		GeneticAlgorithm algorithm = new GeneticAlgorithm(
-				new PieceOrderedCrossover(), Util.CROSSOVER_RATE,
-				new RandomPieceMutation(), Util.MUTATION_RATE,
-				new TournamentSelection(Util.TOURNAMENT_ARITY));
-		Population optimized = algorithm.evolve(initial, new FixedElapsedTime(
-				Util.OPTIMIZATION_TIMEOUT_SECONDS));
+		GeneticAlgorithm algorithm = new GeneticAlgorithm(new PieceOrderedCrossover(), Util.CROSSOVER_RATE,
+				new RandomPieceMutation(), Util.MUTATION_RATE, new TournamentSelection(Util.TOURNAMENT_ARITY));
+		System.err.println("Genetic algorithm crated ...");
+		Population optimized = algorithm.evolve(initial, new FixedElapsedTime(Util.OPTIMIZATION_TIMEOUT_SECONDS));
+		System.err.println("Optimization finished ...");
 
-		List<Piece> pieces = ((PieceListChromosome) optimized
-				.getFittestChromosome()).getPieces();
-		Util.saveSolution("" + (new Date()).getTime() + "_" + (int)(optimized.getFittestChromosome().fitness()) + ".bmp", pieces,
+		List<Piece> pieces = ((PieceListChromosome) optimized.getFittestChromosome()).getPieces();
+		Util.saveSolution(
+				"" + (new Date()).getTime() + "_" + (int) (optimized.getFittestChromosome().fitness()) + ".bmp", pieces,
 				X, Y);
+		System.err.println("Solution saved ...");
 	}
 
 	/**
@@ -108,6 +106,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		Object data[] = Util.readInputByCoordinates();
+		System.err.println("Data read ...");
 
 		Vector<Piece> pieces = (Vector<Piece>) data[0];
 		int X = (Integer) data[1];
