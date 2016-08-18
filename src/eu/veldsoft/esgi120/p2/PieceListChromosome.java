@@ -27,7 +27,8 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 * @param representation
 	 * @throws InvalidRepresentationException
 	 */
-	public PieceListChromosome(Piece[] representation) throws InvalidRepresentationException {
+	public PieceListChromosome(Piece[] representation)
+			throws InvalidRepresentationException {
 		super(representation);
 	}
 
@@ -45,7 +46,8 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 * @param representation
 	 * @throws InvalidRepresentationException
 	 */
-	public PieceListChromosome(List<Piece> representation) throws InvalidRepresentationException {
+	public PieceListChromosome(List<Piece> representation)
+			throws InvalidRepresentationException {
 		super(representation);
 	}
 
@@ -57,7 +59,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 		/*
 		 * Virtual Y boundary.
 		 */
-		int level = 0;
+		double level = 0;
 		List<Piece> front = new ArrayList<Piece>();
 
 		/*
@@ -72,8 +74,8 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 				current.flip();
 			}
 
-			int bestLeft = 0;
-			int bestTop = level;
+			double bestLeft = 0;
+			double bestTop = level;
 			current.moveX(-current.getMinX());
 			current.moveY(-current.getMinY() + level);
 
@@ -84,7 +86,8 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				while (current.getMinY() > 0 && Util.overlap(current, front) == null) {
+				while (current.getMinY() > 0
+						&& Util.overlap(current, front) == null) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of
@@ -140,14 +143,16 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void checkValidity(List<Piece> list) throws InvalidRepresentationException {
+	protected void checkValidity(List<Piece> list)
+			throws InvalidRepresentationException {
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AbstractListChromosome<Piece> newFixedLengthChromosome(List<Piece> list) {
+	public AbstractListChromosome<Piece> newFixedLengthChromosome(
+			List<Piece> list) {
 		return new PieceListChromosome(list, true);
 	}
 

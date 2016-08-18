@@ -1,10 +1,13 @@
 package eu.veldsoft.esgi120.p2;
 
 import java.awt.Color;
-import java.awt.Polygon;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.Arrays;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.util.AffineTransformation;
 
 /**
  * Representation of a single piece to cut.
@@ -25,7 +28,7 @@ class Piece implements Cloneable {
 	/**
 	 * Piece polygon coordinates.
 	 */
-	private Polygon polygon = new Polygon();
+	private Polygon polygon = null;
 
 	/**
 	 * {@inheritDoc}
@@ -50,54 +53,53 @@ class Piece implements Cloneable {
 	 */
 	private Piece(Piece parent) {
 		id = parent.id;
-		polygon = new Polygon();
-		for (int i = 0; i < parent.polygon.npoints; i++) {
-			polygon.addPoint(parent.polygon.xpoints[i], parent.polygon.ypoints[i]);
-		}
+		polygon = (Polygon) parent.clone();
 	}
 
 	/**
 	 * Construct pieces by array of points coordinates.
 	 * 
-	 * @param coordinates
+	 * @param vertics
 	 *            Point coordinates.
 	 */
-	Piece(int coordinates[][]) {
+	Piece(int vertices[][]) {
 		super();
 
 		counter++;
 		id = counter;
 
-		this.polygon = new Polygon();
-		for (int k = 0; k < coordinates.length; k++) {
-			this.polygon.addPoint(coordinates[k][0], coordinates[k][1]);
+		int v = 0;
+		Coordinate coordinates[] = new Coordinate[vertices.length];
+		for (int[] vertex : vertices) {
+			coordinates[v].x = vertex[0];
+			coordinates[v].y = vertex[1];
+			coordinates[v].z = 0;
+			v++;
 		}
+		this.polygon = new Polygon(
+				new GeometryFactory().createLinearRing(coordinates), null,
+				new GeometryFactory());
 	}
 
 	/**
 	 * @return Piece as polygon object.
 	 */
-	public Polygon getPolygon() {
-		// TODO Do a deep copy.
-		return polygon;
+	public java.awt.Polygon getAwtPolygon() {
+		java.awt.Polygon awt = new java.awt.Polygon();
+
+		for (Coordinate c : polygon.getCoordinates()) {
+			awt.addPoint((int) c.x, (int) c.y);
+		}
+
+		return awt;
 	}
 
 	/**
 	 * @return Piece as area object.
 	 */
 	public Area getArea() {
-		return new Area(polygon);
-	}
-
-	/**
-	 * @param points
-	 *            the points to set
-	 */
-	public void setPoints(int polygon[][]) {
-		this.polygon = new Polygon();
-		for (int[] coordinates : polygon) {
-			this.polygon.addPoint(coordinates[0], coordinates[1]);
-		}
+		// TODO Find JTS intersection alternative.
+		return new Area(getAwtPolygon());
 	}
 
 	/**
@@ -105,8 +107,8 @@ class Piece implements Cloneable {
 	 * 
 	 * @return Minimum x coordinate.
 	 */
-	int getMinX() {
-		return polygon.getBounds().x;
+	double getMinX() {
+		return polygon.getEnvelopeInternal().getMinX();
 	}
 
 	/**
@@ -114,8 +116,8 @@ class Piece implements Cloneable {
 	 * 
 	 * @return Maximum x coordinate.
 	 */
-	int getMaxX() {
-		return polygon.getBounds().width + polygon.getBounds().x - 1;
+	double getMaxX() {
+		return polygon.getEnvelopeInternal().getMaxX();
 	}
 
 	/**
@@ -123,8 +125,8 @@ class Piece implements Cloneable {
 	 * 
 	 * @return Minimum y coordinate.
 	 */
-	int getMinY() {
-		return polygon.getBounds().y;
+	double getMinY() {
+		return polygon.getEnvelopeInternal().getMinY();
 	}
 
 	/**
@@ -132,8 +134,8 @@ class Piece implements Cloneable {
 	 * 
 	 * @return Maximum y coordinate.
 	 */
-	int getMaxY() {
-		return polygon.getBounds().height + polygon.getBounds().y - 1;
+	double getMaxY() {
+		return polygon.getEnvelopeInternal().getMaxY();
 	}
 
 	/**
@@ -141,8 +143,8 @@ class Piece implements Cloneable {
 	 * 
 	 * @return Piece width.
 	 */
-	int getWidth() {
-		return polygon.getBounds().width;
+	double getWidth() {
+		return polygon.getEnvelopeInternal().getWidth();
 	}
 
 	/**
@@ -150,8 +152,8 @@ class Piece implements Cloneable {
 	 * 
 	 * @return Piece height.
 	 */
-	int getHeight() {
-		return polygon.getBounds().height;
+	double getHeight() {
+		return polygon.getEnvelopeInternal().getHeight();
 	}
 
 	/**
@@ -193,33 +195,26 @@ class Piece implements Cloneable {
 	 *            Angle of rotation.
 	 */
 	void turn(double dr) {
-		/*
-		 * Transform parallel arrays in a single array.
-		 */
-		double source[] = new double[polygon.npoints * 2];
-		double destination[] = new double[polygon.npoints * 2];
-		for (int k = 0, l = 0; k < polygon.npoints; k++) {
-			source[l++] = polygon.xpoints[k];
-			source[l++] = polygon.ypoints[k];
+		// TODO May be it is rotation around xOy.
+		AffineTransformation transform = AffineTransformation
+				.rotationInstance(dr);
+		for (Coordinate c : polygon.getCoordinates()) {
+			transform.transform(c, c);
 		}
+	}
 
-		/*
-		 * Rotate according piece center.
-		 */
-		AffineTransform
-				.getRotateInstance(dr, (polygon.getBounds().x + polygon.getBounds().width - 1) / 2D,
-						(polygon.getBounds().y + polygon.getBounds().height - 1) / 2D)
-				.transform(source, 0, destination, 0, polygon.npoints);
-
-		/*
-		 * Transform the single array in parallel arrays.
-		 */
-		for (int k = 0, l = 0; k < polygon.npoints; k++) {
-			polygon.xpoints[k] = (int) Math.round(destination[l++]);
-			polygon.ypoints[k] = (int) Math.round(destination[l++]);
+	/**
+	 * Move piece on specified distance.
+	 * 
+	 * @param d
+	 *            Distance to move on.
+	 */
+	public void moveX(double d) {
+		AffineTransformation transform = AffineTransformation
+				.translationInstance(d, 0);
+		for (Coordinate c : polygon.getCoordinates()) {
+			transform.transform(c, c);
 		}
-
-		polygon.invalidate();
 	}
 
 	/**
@@ -228,31 +223,23 @@ class Piece implements Cloneable {
 	 * @param dx
 	 *            Distance to move on.
 	 */
-	public void moveX(int dx) {
-		polygon.translate(dx, 0);
-	}
-
-	/**
-	 * Move piece on specified distance.
-	 * 
-	 * @param dx
-	 *            Distance to move on.
-	 */
-	public void moveY(int dy) {
-		polygon.translate(0, dy);
+	public void moveY(double d) {
+		AffineTransformation transform = AffineTransformation
+				.translationInstance(0, d);
+		for (Coordinate c : polygon.getCoordinates()) {
+			transform.transform(c, c);
+		}
 	}
 
 	/**
 	 * Flip the by the primary diagonal.
 	 */
 	public void flip() {
-		int value = 0;
-		for (int k = 0; k < polygon.npoints; k++) {
-			value = polygon.xpoints[k];
-			polygon.xpoints[k] = polygon.ypoints[k];
-			polygon.ypoints[k] = value;
+		AffineTransformation transform = AffineTransformation
+				.reflectionInstance(1000000, 1000000);
+		for (Coordinate c : polygon.getCoordinates()) {
+			transform.transform(c, c);
 		}
-		polygon.invalidate();
 	}
 
 	/**
@@ -290,9 +277,9 @@ class Piece implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return "Piece [id=" + id + ", polygon=" + Arrays.toString(polygon.xpoints) + " "
-				+ Arrays.toString(polygon.ypoints) + ", minX=" + polygon.getBounds().x + ", maxX="
-				+ (polygon.getBounds().x + polygon.getBounds().width - 1) + ", minY=" + polygon.getBounds().y
-				+ ", maxY=" + (polygon.getBounds().y + polygon.getBounds().height - 1) + "]";
+		return "Piece [id=" + id + ", polygon="
+				+ Arrays.toString(polygon.getCoordinates()) + ", minX="
+				+ getMinX() + ", maxX=" + getMaxX() + ", minY=" + getMinY()
+				+ ", maxY=" + getMaxY() + "]";
 	}
 }

@@ -148,8 +148,10 @@ class Util {
 			/*
 			 * If bound rectangles do not overlap the pieces do not overlap.
 			 */
-			if (current.getMaxX() < piece.getMinX() || piece.getMaxX() < current.getMinX()
-					|| current.getMaxY() < piece.getMinY() || piece.getMaxY() < current.getMinY()) {
+			if (current.getMaxX() < piece.getMinX()
+					|| piece.getMaxX() < current.getMinX()
+					|| current.getMaxY() < piece.getMinY()
+					|| piece.getMaxY() < current.getMinY()) {
 				continue;
 			}
 
@@ -180,19 +182,22 @@ class Util {
 		Scanner in = new Scanner(System.in);
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException("First number should be number of pieces.");
+			throw new RuntimeException(
+					"First number should be number of pieces.");
 		}
 		n = in.nextInt();
 
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException("Second number should be width of the sheet.");
+			throw new RuntimeException(
+					"Second number should be width of the sheet.");
 		}
 		X = in.nextInt();
 
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException("Third number should be height of the sheet.");
+			throw new RuntimeException(
+					"Third number should be height of the sheet.");
 		}
 		Y = in.nextInt();
 
@@ -284,8 +289,10 @@ class Util {
 	 * @param height
 	 *            Sheet height.
 	 */
-	static void saveSolution(String fileName, List<Piece> pieces, int width, int height) {
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+	static void saveSolution(String fileName, List<Piece> pieces, int width,
+			int height) {
+		BufferedImage image = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_RGB);
 
 		Graphics g = image.getGraphics();
 
@@ -295,18 +302,18 @@ class Util {
 		for (Piece piece : pieces) {
 			g.setColor(Color.black);
 			piece.moveX(-1);
-			g.fillPolygon(piece.getPolygon());
+			g.fillPolygon(piece.getAwtPolygon());
 			piece.moveX(+2);
-			g.fillPolygon(piece.getPolygon());
+			g.fillPolygon(piece.getAwtPolygon());
 			piece.moveX(-1);
 			piece.moveY(-1);
-			g.fillPolygon(piece.getPolygon());
+			g.fillPolygon(piece.getAwtPolygon());
 			piece.moveY(+2);
-			g.fillPolygon(piece.getPolygon());
+			g.fillPolygon(piece.getAwtPolygon());
 			piece.moveY(-1);
 
 			g.setColor(piece.color());
-			g.fillPolygon(piece.getPolygon());
+			g.fillPolygon(piece.getAwtPolygon());
 		}
 
 		try {
@@ -324,7 +331,8 @@ class Util {
 	 * @param plates
 	 * @return
 	 */
-	public static Population randomInitialPopulation(int width, int height, List<Piece> plates) {
+	public static Population randomInitialPopulation(int width, int height,
+			List<Piece> plates) {
 		List<Chromosome> list = new ArrayList<Chromosome>();
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			/*
@@ -373,19 +381,25 @@ class Util {
 				Collections.sort(chromosome, new WidthComparator());
 				break;
 			case 7:
-				Collections.sort(chromosome, Collections.reverseOrder(new WidthComparator()));
+				Collections.sort(chromosome,
+						Collections.reverseOrder(new WidthComparator()));
 				break;
 			case 8:
 				Collections.sort(chromosome, new HeightComparator());
 				break;
 			case 9:
-				Collections.sort(chromosome, Collections.reverseOrder(new HeightComparator()));
+				Collections.sort(chromosome,
+						Collections.reverseOrder(new HeightComparator()));
 				break;
 			case 10:
-				Collections.sort(chromosome, new BoundRectangleDimensionsComparator());
+				Collections.sort(chromosome,
+						new BoundRectangleDimensionsComparator());
 				break;
 			case 11:
-				Collections.sort(chromosome, Collections.reverseOrder(new BoundRectangleDimensionsComparator()));
+				Collections
+						.sort(chromosome,
+								Collections
+										.reverseOrder(new BoundRectangleDimensionsComparator()));
 				break;
 			}
 

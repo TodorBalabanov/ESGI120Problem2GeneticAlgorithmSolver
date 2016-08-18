@@ -113,19 +113,25 @@ class SimpleGeneticAlgorithm {
 				Collections.sort(chromosome, new WidthComparator());
 				break;
 			case 3:
-				Collections.sort(chromosome, Collections.reverseOrder(new WidthComparator()));
+				Collections.sort(chromosome,
+						Collections.reverseOrder(new WidthComparator()));
 				break;
 			case 4:
 				Collections.sort(chromosome, new HeightComparator());
 				break;
 			case 5:
-				Collections.sort(chromosome, Collections.reverseOrder(new HeightComparator()));
+				Collections.sort(chromosome,
+						Collections.reverseOrder(new HeightComparator()));
 				break;
 			case 6:
-				Collections.sort(chromosome, new BoundRectangleDimensionsComparator());
+				Collections.sort(chromosome,
+						new BoundRectangleDimensionsComparator());
 				break;
 			case 7:
-				Collections.sort(chromosome, Collections.reverseOrder(new BoundRectangleDimensionsComparator()));
+				Collections
+						.sort(chromosome,
+								Collections
+										.reverseOrder(new BoundRectangleDimensionsComparator()));
 				break;
 			}
 
@@ -166,10 +172,12 @@ class SimpleGeneticAlgorithm {
 		worstIndex = 0;
 
 		for (int index = 0; index < fitness.size(); index++) {
-			if (fitness.get(index).doubleValue() < fitness.get(bestIndex).doubleValue()) {
+			if (fitness.get(index).doubleValue() < fitness.get(bestIndex)
+					.doubleValue()) {
 				bestIndex = index;
 			}
-			if (fitness.get(index).doubleValue() > fitness.get(worstIndex).doubleValue()) {
+			if (fitness.get(index).doubleValue() > fitness.get(worstIndex)
+					.doubleValue()) {
 				worstIndex = index;
 			}
 		}
@@ -182,7 +190,8 @@ class SimpleGeneticAlgorithm {
 		do {
 			firstIndex = Util.PRNG.nextInt(population.size());
 			secondIndex = Util.PRNG.nextInt(population.size());
-		} while (firstIndex == secondIndex || firstIndex == worstIndex || secondIndex == worstIndex);
+		} while (firstIndex == secondIndex || firstIndex == worstIndex
+				|| secondIndex == worstIndex);
 	}
 
 	/**
@@ -242,11 +251,12 @@ class SimpleGeneticAlgorithm {
 		List<Piece> result = population.get(worstIndex);
 
 		for (Piece piece : result) {
-			while (piece.getMinX() < 0 || piece.getMaxX() >= width || piece.getMinY() < 0
+			while (piece.getMinX() < 0 || piece.getMaxX() >= width
+					|| piece.getMinY() < 0
 					|| piece.getMaxY() + piece.getHeight() >= height
 					|| Util.overlap(piece, population.get(worstIndex)) != null) {
-				piece.moveX(Util.PRNG.nextInt(width - piece.getWidth()));
-				piece.moveY(Util.PRNG.nextInt(height - piece.getHeight()));
+				piece.moveX(Util.PRNG.nextInt((int) (width - piece.getWidth())));
+				piece.moveY(Util.PRNG.nextInt((int) (height - piece.getHeight())));
 			}
 		}
 	}
@@ -262,7 +272,7 @@ class SimpleGeneticAlgorithm {
 	 */
 	public void pack1(int width, int height) {
 		// TODO Pack polygons not surrounding rectangle.
-		int level[] = new int[width];
+		double level[] = new double[width];
 		for (int i = 0; i < level.length; i++) {
 			level[i] = 0;
 		}
@@ -279,8 +289,8 @@ class SimpleGeneticAlgorithm {
 		/*
 		 * Pack pieces.
 		 */
-		int x = 0;
-		int y = 0;
+		double x = 0;
+		double y = 0;
 		for (Piece piece : population.get(worstIndex)) {
 			if (x + piece.getWidth() >= width) {
 				x = 0;
@@ -290,9 +300,9 @@ class SimpleGeneticAlgorithm {
 			 * Find y offset for current piece.
 			 */
 			y = 0;
-			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
-				if (dx < width && y < level[dx]) {
-					y = level[dx];
+			for (double dx = x; dx < (x + piece.getWidth()); dx++) {
+				if (dx < width && y < level[(int) dx]) {
+					y = level[(int) dx];
 				}
 			}
 
@@ -306,9 +316,9 @@ class SimpleGeneticAlgorithm {
 			/*
 			 * Move lines for next placement.
 			 */
-			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
+			for (double dx = x; dx < (x + piece.getWidth()); dx++) {
 				if (dx < width) {
-					level[dx] = y + piece.getHeight();
+					level[(int) dx] = y + piece.getHeight();
 				}
 			}
 			x += piece.getWidth();
@@ -332,7 +342,7 @@ class SimpleGeneticAlgorithm {
 		/*
 		 * Virtual Y boundary.
 		 */
-		int level = 0;
+		double level = 0;
 		// int level = filled.getBounds().height;
 
 		/*
@@ -347,8 +357,8 @@ class SimpleGeneticAlgorithm {
 				current.flip();
 			}
 
-			int bestLeft = 0;
-			int bestTop = level;
+			double bestLeft = 0;
+			double bestTop = level;
 			current.moveX(-current.getMinX());
 			current.moveY(-current.getMinY() + level);
 
@@ -359,7 +369,8 @@ class SimpleGeneticAlgorithm {
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				while (current.getMinY() > 0 && Util.overlap(current, front) == null) {
+				while (current.getMinY() > 0
+						&& Util.overlap(current, front) == null) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of

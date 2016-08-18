@@ -13,6 +13,6 @@ class HeightComparator implements Comparator<Piece> {
 	 */
 	@Override
 	public int compare(Piece a, Piece b) {
-		return b.getHeight() - a.getHeight();
+		return (int) (b.getHeight() - a.getHeight());
 	}
 }

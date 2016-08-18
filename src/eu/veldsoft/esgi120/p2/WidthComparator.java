@@ -13,6 +13,6 @@ class WidthComparator implements Comparator<Piece> {
 	 */
 	@Override
 	public int compare(Piece a, Piece b) {
-		return b.getWidth() - a.getWidth();
+		return (int) (b.getWidth() - a.getWidth());
 	}
 }
