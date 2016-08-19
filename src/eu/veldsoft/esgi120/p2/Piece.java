@@ -1,13 +1,14 @@
 package eu.veldsoft.esgi120.p2;
 
 import java.awt.Color;
-import java.awt.geom.Area;
 import java.util.Arrays;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.AffineTransformation;
+import com.vividsolutions.jts.operation.overlay.snap.SnapIfNeededOverlayOp;
 
 /**
  * Representation of a single piece to cut.
@@ -40,7 +41,7 @@ class Piece implements Cloneable {
 	}
 
 	/**
-	 * Privet constructor to block piece instance creation.
+	 * Private constructor to block piece instance creation.
 	 */
 	private Piece() {
 	}
@@ -53,7 +54,7 @@ class Piece implements Cloneable {
 	 */
 	private Piece(Piece parent) {
 		id = parent.id;
-		polygon = (Polygon) parent.clone();
+		polygon = (Polygon) parent.polygon.clone();
 	}
 
 	/**
@@ -69,16 +70,26 @@ class Piece implements Cloneable {
 		id = counter;
 
 		int v = 0;
-		Coordinate coordinates[] = new Coordinate[vertices.length];
+		Coordinate coordinates[] = new Coordinate[vertices.length + 1];
 		for (int[] vertex : vertices) {
-			coordinates[v].x = vertex[0];
-			coordinates[v].y = vertex[1];
-			coordinates[v].z = 0;
-			v++;
+			coordinates[v++] = new Coordinate(vertex[0], vertex[1], 0);
 		}
+
+		/*
+		 * Close the polygon with the first point.
+		 */
+		coordinates[v] = new Coordinate(vertices[0][0], vertices[0][1], 0);
+
 		this.polygon = new Polygon(
 				new GeometryFactory().createLinearRing(coordinates), null,
 				new GeometryFactory());
+	}
+
+	/**
+	 * @return The internal polygon representation.
+	 */
+	public Polygon getPolygon() {
+		return polygon;
 	}
 
 	/**
@@ -95,11 +106,29 @@ class Piece implements Cloneable {
 	}
 
 	/**
-	 * @return Piece as area object.
+	 * Generate intersection of two pieces.
+	 * 
+	 * @param shape
+	 *            Shape to intersect with.
+	 * 
+	 * @return Intersection of the pieces as geometry object.
 	 */
-	public Area getArea() {
-		// TODO Find JTS intersection alternative.
-		return new Area(getAwtPolygon());
+	public Geometry intersection(Geometry shape) {
+		// TODO May be it is better to use SnapOverlayOp or OverlayOp.
+		return SnapIfNeededOverlayOp.intersection(polygon, shape);
+	}
+
+	/**
+	 * Generate intersection of two pieces.
+	 * 
+	 * @param piece
+	 *            Piece to intersect with.
+	 * 
+	 * @return Intersection of the pieces as geometry object.
+	 */
+	public Geometry intersection(Piece piece) {
+		// TODO May be it is better to use SnapOverlayOp or OverlayOp.
+		return SnapIfNeededOverlayOp.intersection(polygon, piece.polygon);
 	}
 
 	/**

@@ -1,9 +1,14 @@
 package eu.veldsoft.esgi120.p2;
 
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.overlay.snap.SnapOverlayOp;
 
 /**
  * Genetic algorithm implementation.
@@ -40,24 +45,6 @@ class SimpleGeneticAlgorithm {
 	 * Population individuals.
 	 */
 	private List<List<Piece>> population = new ArrayList<List<Piece>>();
-
-	/**
-	 * Check for overlapping of specified piece with the others.
-	 * 
-	 * @param piece
-	 *            Piece to check for.
-	 * @param area
-	 *            All other pieces part of the filled area.
-	 * 
-	 * @return Reference to overlapped piece or null pointer if there is no
-	 *         overlapping.
-	 */
-	private boolean overlap(Piece piece, Area area) {
-		Area result = piece.getArea();
-		result.intersect(area);
-
-		return !result.isEmpty();
-	}
 
 	/**
 	 * Constructor with parameters.
@@ -254,7 +241,7 @@ class SimpleGeneticAlgorithm {
 			while (piece.getMinX() < 0 || piece.getMaxX() >= width
 					|| piece.getMinY() < 0
 					|| piece.getMaxY() + piece.getHeight() >= height
-					|| Util.overlap(piece, population.get(worstIndex)) != null) {
+					|| Util.overlap(piece, population.get(worstIndex)) == true) {
 				piece.moveX(Util.PRNG.nextInt((int) (width - piece.getWidth())));
 				piece.moveY(Util.PRNG.nextInt((int) (height - piece.getHeight())));
 			}
@@ -335,15 +322,19 @@ class SimpleGeneticAlgorithm {
 	 *            Sheet height.
 	 */
 	public void pack2(int width, int height) {
-		List<Piece> front = new ArrayList<Piece>();
-		// Area filled = new Area(new Polygon(new int[] { 0, width - 1, width -
-		// 1, 0 }, new int[] { 0, 0, 1, 1 }, 4));
+		// List<Piece> front = new ArrayList<Piece>();
+		Geometry stack = new Polygon(
+				new GeometryFactory().createLinearRing(new Coordinate[] {
+						new Coordinate(0, 0, 0),
+						new Coordinate(width - 1, 0, 0),
+						new Coordinate(width - 1, 1, 0),
+						new Coordinate(0, 1, 0) }), null, new GeometryFactory());
 
 		/*
 		 * Virtual Y boundary.
 		 */
-		double level = 0;
-		// int level = filled.getBounds().height;
+		// double level = 0;
+		double level = stack.getEnvelopeInternal().getMaxX();
 
 		/*
 		 * Place all pieces on the sheet
@@ -370,7 +361,7 @@ class SimpleGeneticAlgorithm {
 				 * Touch sheet bounds of touch other piece.
 				 */
 				while (current.getMinY() > 0
-						&& Util.overlap(current, front) == null) {
+						&& Util.overlap(current, /* front */stack) == false) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of
@@ -407,8 +398,8 @@ class SimpleGeneticAlgorithm {
 			/*
 			 * Add current piece in the ordered set and the front set.
 			 */
-			front.add(current);
-			// filled.add(current.getArea());
+			// front.add(current);
+			stack = SnapOverlayOp.union(stack, current.getPolygon());
 		}
 	}
 

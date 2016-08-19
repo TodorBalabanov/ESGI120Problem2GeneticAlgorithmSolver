@@ -87,7 +87,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 				 * Touch sheet bounds of touch other piece.
 				 */
 				while (current.getMinY() > 0
-						&& Util.overlap(current, front) == null) {
+						&& Util.overlap(current, front) == false) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of

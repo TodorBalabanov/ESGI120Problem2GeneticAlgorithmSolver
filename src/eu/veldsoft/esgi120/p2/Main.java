@@ -13,7 +13,7 @@ public class Main {
 	/**
 	 * How many individuals to be created during optimization process.
 	 */
-	private static final long NUMBER_OF_NEW_INDIVIDUALS = 7;// 10_000_000;
+	private static final long NUMBER_OF_NEW_INDIVIDUALS = 1000;// 10_000_000;
 
 	/**
 	 * How often to save temporary bitmap file.
@@ -101,7 +101,7 @@ public class Main {
 		Util.saveSolution(
 				"" + (new Date()).getTime() + "_"
 						+ (int) (optimized.getFittestChromosome().fitness())
-						+ ".bmp", pieces, X, Y);
+						+ ".gif", pieces, X, Y);
 		System.err.println("Solution saved ...");
 	}
 

@@ -2,7 +2,6 @@ package eu.veldsoft.esgi120.p2;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +16,8 @@ import javax.imageio.ImageIO;
 import org.apache.commons.math3.genetics.Chromosome;
 import org.apache.commons.math3.genetics.ElitisticListPopulation;
 import org.apache.commons.math3.genetics.Population;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Utilities class.
@@ -57,7 +58,7 @@ class Util {
 	/**
 	 * 
 	 */
-	static final long OPTIMIZATION_TIMEOUT_SECONDS = 12 * 60 * 60 * 1;
+	static final long OPTIMIZATION_TIMEOUT_SECONDS = /* 12 * 60 * */60 * 1;
 
 	/**
 	 * Flip all pieces to be landscape.
@@ -128,15 +129,29 @@ class Util {
 	/**
 	 * Check for overlapping of specified piece with the others.
 	 * 
+	 * @param piece
+	 *            Piece to check for.
+	 * @param area
+	 *            All other pieces part of the filled area.
+	 * 
+	 * @return Reference to overlapped piece or null pointer if there is no
+	 *         overlapping.
+	 */
+	static boolean overlap(Piece piece, Geometry stack) {
+		return !piece.intersection(stack).isEmpty();
+	}
+
+	/**
+	 * Check for overlapping of specified piece with the others.
+	 * 
 	 * @param current
 	 *            Piece to check for.
 	 * @param pieces
 	 *            All other pieces.
 	 * 
-	 * @return Reference to overlapped piece or null pointer if there is no
-	 *         overlapping.
+	 * @return True for overlapping, false otherwise.
 	 */
-	static Piece overlap(Piece current, List<Piece> pieces) {
+	static boolean overlap(Piece current, List<Piece> pieces) {
 		for (Piece piece : pieces) {
 			/*
 			 * The piece can not overlap with itself.
@@ -158,20 +173,18 @@ class Util {
 			/*
 			 * Check for polygons overlapping.
 			 */
-			Area area = (Area) current.getArea();
-			area.intersect(piece.getArea());
-			if (area.isEmpty() == false) {
-				return piece;
+			if (current.intersection(piece).isEmpty() == false) {
+				return true;
 			}
 		}
 
-		return null;
+		return false;
 	}
 
 	/**
 	 * Read input data as points coordinates.
 	 * 
-	 * @return Array with coordinates and sheet dimessions.
+	 * @return Array with coordinates and sheet dimensions.
 	 */
 	static Object[] readInputByCoordinates() {
 		int n;
@@ -317,7 +330,7 @@ class Util {
 		}
 
 		try {
-			ImageIO.write(image, "BMP", new File(fileName));
+			ImageIO.write(image, "GIF", new File(fileName));
 		} catch (IOException e) {
 		}
 
