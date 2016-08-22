@@ -3,7 +3,6 @@ package eu.veldsoft.esgi120.p2;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.math3.genetics.FixedElapsedTime;
 import org.apache.commons.math3.genetics.GeneticAlgorithm;
 import org.apache.commons.math3.genetics.Population;
 import org.apache.commons.math3.genetics.TournamentSelection;
@@ -85,6 +84,7 @@ public class Main {
 		PieceListChromosome.width = X;
 		PieceListChromosome.height = Y;
 		Population initial = Util.randomInitialPopulation(X, Y, plates);
+		Population optimized = initial;
 		System.err.println("Initial population evaluated ...");
 
 		GeneticAlgorithm algorithm = new GeneticAlgorithm(
@@ -92,8 +92,8 @@ public class Main {
 				new RandomPieceMutation(), Util.MUTATION_RATE,
 				new TournamentSelection(Util.TOURNAMENT_ARITY));
 		System.err.println("Genetic algorithm crated ...");
-		Population optimized = algorithm.evolve(initial, new FixedElapsedTime(
-				Util.OPTIMIZATION_TIMEOUT_SECONDS));
+//		optimized = algorithm.evolve(initial, new FixedElapsedTime(
+//				Util.OPTIMIZATION_TIMEOUT_SECONDS));
 		System.err.println("Optimization finished ...");
 
 		List<Piece> pieces = ((PieceListChromosome) optimized
@@ -101,7 +101,7 @@ public class Main {
 		Util.saveSolution(
 				"" + (new Date()).getTime() + "_"
 						+ (int) (optimized.getFittestChromosome().fitness())
-						+ ".gif", pieces, X, Y);
+						+ ".bmp", pieces, X, Y);
 		System.err.println("Solution saved ...");
 	}
 
@@ -118,6 +118,10 @@ public class Main {
 		List<Piece> pieces = (List<Piece>) data[0];
 		int X = (Integer) data[1];
 		int Y = (Integer) data[2];
+
+		// TODO Do profiling to find the bottle necks in the code.
+
+		// TODO Write LSSC 2017 abstract.
 
 		// optimization1(X, Y, pieces);
 		optimization2(X, Y, pieces);

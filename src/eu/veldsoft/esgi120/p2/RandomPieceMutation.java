@@ -28,16 +28,32 @@ public class RandomPieceMutation implements MutationPolicy {
 		/*
 		 * Change piece angle.
 		 */
-		if (Util.PRNG.nextBoolean() == true) {
+		if (Util.PRNG.nextDouble() < Util.ROTATION_MUTATION_RATE) {
 			piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
 		}
 
 		/*
 		 * Change the order of the pieces.
 		 */
-		if (Util.PRNG.nextBoolean() == true) {
-			piece = pieces.remove(Util.PRNG.nextInt(pieces.size()));
-			pieces.add(piece);
+		if (Util.PRNG.nextDouble() < Util.PERMUTATION_MUTATION_RATE) {
+			Piece a = null;
+			Piece b = null;
+			do {
+				a = pieces.get(Util.PRNG.nextInt(pieces.size()));
+				b = pieces.get(Util.PRNG.nextInt(pieces.size()));
+			} while (a == b);
+			a.swap(b);
+		}
+
+		/*
+		 * Shuffle pieces.
+		 */
+		if (Util.PRNG.nextDouble() < Util.SHUFFLING_MUTATION_RATE) {
+			//TODO Use better approved shuffling.
+			for(Piece a : pieces) {
+				Piece b = pieces.get(Util.PRNG.nextInt(pieces.size()));
+				a.swap(b);
+			}
 		}
 
 		// TODO May be it is better to use deep copy.

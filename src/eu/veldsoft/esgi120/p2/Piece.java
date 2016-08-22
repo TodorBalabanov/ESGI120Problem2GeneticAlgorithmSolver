@@ -224,12 +224,12 @@ class Piece implements Cloneable {
 	 *            Angle of rotation.
 	 */
 	void turn(double dr) {
-		// TODO May be it is rotation around xOy.
-		AffineTransformation transform = AffineTransformation
-				.rotationInstance(dr);
-		for (Coordinate c : polygon.getCoordinates()) {
-			transform.transform(c, c);
-		}
+//		// TODO May be it is rotation around xOy.
+//		AffineTransformation transform = AffineTransformation
+//				.rotationInstance(dr);
+//		for (Coordinate c : polygon.getCoordinates()) {
+//			transform.transform(c, c);
+//		}
 	}
 
 	/**
@@ -239,11 +239,11 @@ class Piece implements Cloneable {
 	 *            Distance to move on.
 	 */
 	public void moveX(double d) {
-		AffineTransformation transform = AffineTransformation
-				.translationInstance(d, 0);
-		for (Coordinate c : polygon.getCoordinates()) {
-			transform.transform(c, c);
-		}
+//		AffineTransformation transform = AffineTransformation
+//				.translationInstance(d, 0);
+//		for (Coordinate c : polygon.getCoordinates()) {
+//			transform.transform(c, c);
+//		}
 	}
 
 	/**
@@ -253,22 +253,39 @@ class Piece implements Cloneable {
 	 *            Distance to move on.
 	 */
 	public void moveY(double d) {
-		AffineTransformation transform = AffineTransformation
-				.translationInstance(0, d);
-		for (Coordinate c : polygon.getCoordinates()) {
-			transform.transform(c, c);
-		}
+//		AffineTransformation transform = AffineTransformation
+//				.translationInstance(0, d);
+//		for (Coordinate c : polygon.getCoordinates()) {
+//			transform.transform(c, c);
+//		}
 	}
 
 	/**
 	 * Flip the by the primary diagonal.
 	 */
 	public void flip() {
-		AffineTransformation transform = AffineTransformation
-				.reflectionInstance(1000000, 1000000);
-		for (Coordinate c : polygon.getCoordinates()) {
-			transform.transform(c, c);
-		}
+//		AffineTransformation transform = AffineTransformation
+//				.reflectionInstance(1000000, 1000000);
+//		for (Coordinate c : polygon.getCoordinates()) {
+//			transform.transform(c, c);
+//		}
+	}
+
+	/**
+	 * Swap internal structure of the objects.
+	 * 
+	 * @param other
+	 *            Object to swap with.
+	 */
+	public void swap(Piece other) {
+		int id = other.id;
+		Polygon polygon = other.polygon;
+
+		other.id = this.id;
+		other.polygon = this.polygon;
+
+		this.id = id;
+		this.polygon = polygon;
 	}
 
 	/**

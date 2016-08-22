@@ -3,6 +3,7 @@ package eu.veldsoft.esgi120.p2;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,12 +39,27 @@ class Util {
 	/**
 	 * 
 	 */
-	static final double CROSSOVER_RATE = 0.9;
+	static final double CROSSOVER_RATE = 0.90;
 
 	/**
 	 * 
 	 */
 	static final double MUTATION_RATE = 0.03;
+
+	/**
+	 * 
+	 */
+	static final double ROTATION_MUTATION_RATE = 0.5;
+
+	/**
+	 * 
+	 */
+	static final double PERMUTATION_MUTATION_RATE = 0.5;
+
+	/**
+	 * 
+	 */
+	static final double SHUFFLING_MUTATION_RATE = 0.001;
 
 	/**
 	 * 
@@ -58,7 +74,7 @@ class Util {
 	/**
 	 * 
 	 */
-	static final long OPTIMIZATION_TIMEOUT_SECONDS = /* 12 * 60 * */60 * 1;
+	static final long OPTIMIZATION_TIMEOUT_SECONDS = 10;
 
 	/**
 	 * Flip all pieces to be landscape.
@@ -119,7 +135,7 @@ class Util {
 	 * @param height
 	 *            Height of the sheet.
 	 */
-	private void allCenter(List<Piece> pieces, int width, int height) {
+	static void allCenter(List<Piece> pieces, int width, int height) {
 		for (Piece piece : pieces) {
 			piece.moveX(-piece.getMinX() + width / 2 - piece.getWidth() / 2);
 			piece.moveY(-piece.getMinY() + height / 2 - piece.getHeight() / 2);
@@ -277,8 +293,8 @@ class Util {
 			 * Move to center.
 			 */
 			for (int k = 0; k < coordinates.length; k++) {
-				coordinates[k][0] += X / 2 - (minX + maxX) / 2 - minX;
-				coordinates[k][1] += Y / 2 - (minY + maxY) / 2 - minY;
+				coordinates[k][0] += -minX + (X / 2.0 - (maxX - minX) / 2.0);
+				coordinates[k][1] += -minY + (Y / 2.0 - (maxY - minY) / 2.0);
 			}
 
 			pieces.add(new Piece(coordinates));
@@ -305,7 +321,21 @@ class Util {
 	static void saveSolution(String fileName, List<Piece> pieces, int width,
 			int height) {
 		BufferedImage image = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
+				BufferedImage.TYPE_BYTE_BINARY, new IndexColorModel(4, 16,
+						new byte[] { (byte) 0, (byte) 128, (byte) 192,
+								(byte) 255, (byte) 128, (byte) 255, (byte) 128,
+								(byte) 255, (byte) 0, (byte) 0, (byte) 0,
+								(byte) 0, (byte) 0, (byte) 0, (byte) 128,
+								(byte) 255, }, new byte[] { (byte) 0,
+								(byte) 128, (byte) 192, (byte) 255, (byte) 0,
+								(byte) 0, (byte) 128, (byte) 255, (byte) 128,
+								(byte) 255, (byte) 128, (byte) 255, (byte) 0,
+								(byte) 0, (byte) 0, (byte) 0, },
+						new byte[] { (byte) 0, (byte) 128, (byte) 192,
+								(byte) 255, (byte) 0, (byte) 0, (byte) 0,
+								(byte) 0, (byte) 0, (byte) 0, (byte) 128,
+								(byte) 255, (byte) 128, (byte) 255, (byte) 128,
+								(byte) 255, }));
 
 		Graphics g = image.getGraphics();
 
@@ -330,7 +360,7 @@ class Util {
 		}
 
 		try {
-			ImageIO.write(image, "GIF", new File(fileName));
+			ImageIO.write(image, "BMP", new File(fileName));
 		} catch (IOException e) {
 		}
 
@@ -351,9 +381,9 @@ class Util {
 			/*
 			 * Deep copy of the plates.
 			 */
-			List<Piece> chromosome = new ArrayList<Piece>();
+			List<Piece> pieces = new ArrayList<Piece>();
 			for (Piece piece : plates) {
-				chromosome.add((Piece) piece.clone());
+				pieces.add((Piece) piece.clone());
 			}
 
 			/*
@@ -366,13 +396,13 @@ class Util {
 				/* Unchanged. */
 				break;
 			case 3:
-				Util.allLandscape(chromosome);
+				Util.allLandscape(pieces);
 				break;
 			case 4:
-				Util.allPortrait(chromosome);
+				Util.allPortrait(pieces);
 				break;
 			case 5:
-				Util.allAtRandomAngle(chromosome);
+				Util.allAtRandomAngle(pieces);
 				break;
 			}
 
@@ -388,29 +418,29 @@ class Util {
 				/* Unchanged. */
 				break;
 			case 5:
-				Collections.shuffle(chromosome);
+				Collections.shuffle(pieces);
 				break;
 			case 6:
-				Collections.sort(chromosome, new WidthComparator());
+				Collections.sort(pieces, new WidthComparator());
 				break;
 			case 7:
-				Collections.sort(chromosome,
+				Collections.sort(pieces,
 						Collections.reverseOrder(new WidthComparator()));
 				break;
 			case 8:
-				Collections.sort(chromosome, new HeightComparator());
+				Collections.sort(pieces, new HeightComparator());
 				break;
 			case 9:
-				Collections.sort(chromosome,
+				Collections.sort(pieces,
 						Collections.reverseOrder(new HeightComparator()));
 				break;
 			case 10:
-				Collections.sort(chromosome,
+				Collections.sort(pieces,
 						new BoundRectangleDimensionsComparator());
 				break;
 			case 11:
 				Collections
-						.sort(chromosome,
+						.sort(pieces,
 								Collections
 										.reverseOrder(new BoundRectangleDimensionsComparator()));
 				break;
@@ -419,7 +449,7 @@ class Util {
 			/*
 			 * Add to initial list.
 			 */
-			list.add(new PieceListChromosome(chromosome));
+			list.add((new PieceListChromosome(pieces)).pack1(width, height));
 		}
 
 		return new ElitisticListPopulation(list, 2 * list.size(), ELITISM_RATE);
