@@ -3,6 +3,7 @@ package eu.veldsoft.esgi120.p2;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.math3.genetics.FixedElapsedTime;
 import org.apache.commons.math3.genetics.GeneticAlgorithm;
 import org.apache.commons.math3.genetics.Population;
 import org.apache.commons.math3.genetics.TournamentSelection;
@@ -92,8 +93,8 @@ public class Main {
 				new RandomPieceMutation(), Util.MUTATION_RATE,
 				new TournamentSelection(Util.TOURNAMENT_ARITY));
 		System.err.println("Genetic algorithm crated ...");
-//		optimized = algorithm.evolve(initial, new FixedElapsedTime(
-//				Util.OPTIMIZATION_TIMEOUT_SECONDS));
+		optimized = algorithm.evolve(initial, new FixedElapsedTime(
+				Util.OPTIMIZATION_TIMEOUT_SECONDS));
 		System.err.println("Optimization finished ...");
 
 		List<Piece> pieces = ((PieceListChromosome) optimized

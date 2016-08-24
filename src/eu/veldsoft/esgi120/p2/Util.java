@@ -449,7 +449,7 @@ class Util {
 			/*
 			 * Add to initial list.
 			 */
-			list.add((new PieceListChromosome(pieces))/*.pack1(width, height)*/);
+			list.add((new PieceListChromosome(pieces)));
 		}
 
 		return new ElitisticListPopulation(list, 2 * list.size(), ELITISM_RATE);

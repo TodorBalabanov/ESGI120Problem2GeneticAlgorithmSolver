@@ -113,7 +113,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 */
 	public PieceListChromosome pack1(int width, int height) {
 		// TODO Pack polygons not surrounding rectangle.
-		double level[] = new double[width];
+		int level[] = new int[width];
 		for (int i = 0; i < level.length; i++) {
 			level[i] = 0;
 		}
@@ -130,10 +130,10 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 		/*
 		 * Pack pieces.
 		 */
-		double x = 0;
-		double y = 0;
+		int x = 0;
+		int y = 0;
 		for (Piece piece : getPieces()) {
-			if (x + piece.getWidth() >= width) {
+			if (x + (int)piece.getWidth() >= width) {
 				x = 0;
 			}
 
@@ -141,9 +141,9 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 			 * Find y offset for current piece.
 			 */
 			y = 0;
-			for (double dx = x; dx < (x + piece.getWidth()); dx++) {
-				if (dx < width && y < level[(int) dx]) {
-					y = level[(int) dx];
+			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
+				if (dx < width && y < level[dx]) {
+					y = level[dx];
 				}
 			}
 
@@ -157,12 +157,14 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 			/*
 			 * Move lines for next placement.
 			 */
-			for (double dx = x; dx < (x + piece.getWidth()); dx++) {
+			for (int dx = x; dx < (x + piece.getWidth()); dx++) {
 				if (dx < width) {
-					level[(int) dx] = y + piece.getHeight();
+					level[dx] = (int) (y + piece.getHeight());
 				}
 			}
-			x += piece.getWidth();
+			
+			//TODO Some strange behavior with the rotation.
+			x += (int)piece.getWidth() + 1;
 		}
 
 		return this;
