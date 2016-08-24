@@ -44,17 +44,17 @@ class Util {
 	/**
 	 * 
 	 */
-	static final double MUTATION_RATE = 0.03;
+	static final double MUTATION_RATE = 0.01;
 
 	/**
 	 * 
 	 */
-	static final double ROTATION_MUTATION_RATE = 0.5;
+	static final double ROTATION_MUTATION_RATE = 0.05;
 
 	/**
 	 * 
 	 */
-	static final double PERMUTATION_MUTATION_RATE = 0.5;
+	static final double PERMUTATION_MUTATION_RATE = 0.05;
 
 	/**
 	 * 
