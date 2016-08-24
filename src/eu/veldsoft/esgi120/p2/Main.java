@@ -121,7 +121,7 @@ public class Main {
 
 		// TODO Do profiling to find the bottle necks in the code.
 
-		// TODO Write LSSC 2017 abstract.
+		// TODO Write LSSC 2017 paper.
 
 		// optimization1(X, Y, pieces);
 		optimization2(X, Y, pieces);

@@ -224,9 +224,8 @@ class Piece implements Cloneable {
 	 *            Angle of rotation.
 	 */
 	void turn(double dr) {
-		// TODO May be it is rotation around xOy.
 		AffineTransformation transform = AffineTransformation
-				.rotationInstance(dr);
+				.rotationInstance(dr, polygon.getCentroid().getX(), polygon.getCentroid().getY());
 		for (Coordinate c : polygon.getCoordinates()) {
 			transform.transform(c, c);
 		}
