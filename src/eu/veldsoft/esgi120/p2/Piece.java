@@ -110,7 +110,8 @@ class Piece implements Cloneable {
 	 * @return Intersection of the pieces as geometry object.
 	 */
 	public Geometry intersection(Geometry shape) {
-		// TODO May be it is better to use SnapOverlayOp or OverlayOp.
+		// TODO May be it is better to use SnapOverlayOp or OverlayOp instead of
+		// SnapIfNeededOverlayOp.
 		return SnapIfNeededOverlayOp.intersection(polygon, shape);
 	}
 
