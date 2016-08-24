@@ -8,7 +8,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.AffineTransformation;
-import com.vividsolutions.jts.operation.overlay.snap.SnapIfNeededOverlayOp;
 
 /**
  * Representation of a single piece to cut.
@@ -109,10 +108,10 @@ class Piece implements Cloneable {
 	 * 
 	 * @return Intersection of the pieces as geometry object.
 	 */
-	public Geometry intersection(Geometry shape) {
+	public boolean overlaps(Geometry shape) {
 		// TODO May be it is better to use SnapOverlayOp or OverlayOp instead of
 		// SnapIfNeededOverlayOp.
-		return SnapIfNeededOverlayOp.intersection(polygon, shape);
+		return polygon.overlaps(shape);
 	}
 
 	/**
@@ -123,9 +122,9 @@ class Piece implements Cloneable {
 	 * 
 	 * @return Intersection of the pieces as geometry object.
 	 */
-	public Geometry intersection(Piece piece) {
+	public boolean overlaps(Piece piece) {
 		// TODO May be it is better to use SnapOverlayOp or OverlayOp.
-		return SnapIfNeededOverlayOp.intersection(polygon, piece.polygon);
+		return polygon.overlaps(piece.polygon);
 	}
 
 	/**

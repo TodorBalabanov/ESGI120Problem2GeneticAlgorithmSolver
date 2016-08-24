@@ -154,7 +154,7 @@ class Util {
 	 *         overlapping.
 	 */
 	static boolean overlap(Piece piece, Geometry stack) {
-		return !piece.intersection(stack).isEmpty();
+		return piece.overlaps(stack);
 	}
 
 	/**
@@ -187,7 +187,7 @@ class Util {
 			/*
 			 * Check for polygons overlapping.
 			 */
-			if (current.intersection(piece).isEmpty() == false) {
+			if (current.overlaps(piece) == false) {
 				return true;
 			}
 		}

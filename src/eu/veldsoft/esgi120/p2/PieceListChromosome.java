@@ -1,15 +1,10 @@
 package eu.veldsoft.esgi120.p2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.genetics.AbstractListChromosome;
 import org.apache.commons.math3.genetics.InvalidRepresentationException;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.operation.overlay.snap.SnapOverlayOp;
 
 /**
  * Chromosome as list of pieces.
@@ -190,18 +185,20 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 *            Sheet height.
 	 */
 	public PieceListChromosome pack2(int width, int height) {
-		// List<Piece> front = new ArrayList<Piece>();
-		Geometry stack = new Polygon(
-				new GeometryFactory()
-						.createLinearRing(new Coordinate[] { new Coordinate(0, -1, 0), new Coordinate(width - 1, -1, 0),
-								new Coordinate(width - 1, 0, 0), new Coordinate(0, 0, 0), new Coordinate(0, -1, 0) }),
-				null, new GeometryFactory());
+		List<Piece> front = new ArrayList<Piece>();
+		// Geometry stack = new Polygon(
+		// new GeometryFactory()
+		// .createLinearRing(new Coordinate[] { new Coordinate(0, -1, 0), new
+		// Coordinate(width - 1, -1, 0),
+		// new Coordinate(width - 1, 0, 0), new Coordinate(0, 0, 0), new
+		// Coordinate(0, -1, 0) }),
+		// null, new GeometryFactory());
 
 		/*
 		 * Virtual Y boundary.
 		 */
-		// double level = 0;
-		double level = stack.getEnvelopeInternal().getMaxX();
+		double level = 0;
+		// double level = stack.getEnvelopeInternal().getMaxX();
 
 		/*
 		 * Place all pieces on the sheet
@@ -227,7 +224,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				while (current.getMinY() > 0 && Util.overlap(current, /* front */stack) == false) {
+				while (current.getMinY() > 0 && Util.overlap(current, front/* stack */) == false) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of
@@ -264,8 +261,8 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 			/*
 			 * Add current piece in the ordered set and the front set.
 			 */
-			// front.add(current);
-			stack = SnapOverlayOp.union(stack, current.getPolygon());
+			front.add(current);
+			// stack = SnapOverlayOp.union(stack, current.getPolygon());
 		}
 
 		return this;
