@@ -120,8 +120,8 @@ public class Main {
 		int X = (Integer) data[1];
 		int Y = (Integer) data[2];
 
+		// TODO Fix complicated pakcing.
 		// TODO Do profiling to find the bottle necks in the code.
-
 		// TODO Write LSSC 2017 paper.
 
 		// optimization1(X, Y, pieces);

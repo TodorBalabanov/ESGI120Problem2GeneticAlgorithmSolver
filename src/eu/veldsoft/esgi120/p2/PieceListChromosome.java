@@ -2,6 +2,7 @@ package eu.veldsoft.esgi120.p2;
 
 import java.util.List;
 
+import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.genetics.AbstractListChromosome;
 import org.apache.commons.math3.genetics.InvalidRepresentationException;
 
@@ -62,7 +63,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	@Override
 	public double fitness() {
 		pack1(width, height);
-		//TODO pack2(width, height);
+		// TODO pack2(width, height);
 
 		/*
 		 * Measure length as fitness value.
@@ -82,6 +83,20 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	@Override
 	protected void checkValidity(List<Piece> list)
 			throws InvalidRepresentationException {
+		// TODO Use regular for loop.
+		for (Piece a : list) {
+			for (Piece b : list) {
+				if (a == b) {
+					continue;
+				}
+
+				if (a.equals(b) == true) {
+					throw new InvalidRepresentationException(
+							LocalizedFormats.DIFFERENT_ORIG_AND_PERMUTED_DATA,
+							a, b);
+				}
+			}
+		}
 	}
 
 	/**
@@ -133,7 +148,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 		int x = 0;
 		int y = 0;
 		for (Piece piece : getPieces()) {
-			if (x + (int)piece.getWidth() >= width) {
+			if (x + (int) piece.getWidth() >= width) {
 				x = 0;
 			}
 
@@ -162,9 +177,9 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 					level[dx] = (int) (y + piece.getHeight());
 				}
 			}
-			
-			//TODO Some strange behavior with the rotation.
-			x += (int)piece.getWidth() + 1;
+
+			// TODO Some strange behavior with the rotation.
+			x += (int) piece.getWidth() + 1;
 		}
 
 		return this;

@@ -1,5 +1,7 @@
 package eu.veldsoft.esgi120.p2;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
@@ -22,7 +24,8 @@ public class RandomPieceMutation implements MutationPolicy {
 			throw new IllegalArgumentException();
 		}
 
-		List<Piece> pieces = ((PieceListChromosome) original).getPieces();
+		List<Piece> pieces = new ArrayList<Piece>();
+		pieces.addAll(((PieceListChromosome) original).getPieces());
 		Piece piece = pieces.get(Util.PRNG.nextInt(pieces.size()));
 
 		/*
@@ -36,24 +39,15 @@ public class RandomPieceMutation implements MutationPolicy {
 		 * Change the order of the pieces.
 		 */
 		if (Util.PRNG.nextDouble() < Util.PERMUTATION_MUTATION_RATE) {
-			Piece a = null;
-			Piece b = null;
-			do {
-				a = pieces.get(Util.PRNG.nextInt(pieces.size()));
-				b = pieces.get(Util.PRNG.nextInt(pieces.size()));
-			} while (a == b);
-			a.swap(b);
+			piece = pieces.remove(Util.PRNG.nextInt(pieces.size()));
+			pieces.add(piece);
 		}
 
 		/*
 		 * Shuffle pieces.
 		 */
 		if (Util.PRNG.nextDouble() < Util.SHUFFLING_MUTATION_RATE) {
-			//TODO Use better approved shuffling.
-			for(Piece a : pieces) {
-				Piece b = pieces.get(Util.PRNG.nextInt(pieces.size()));
-				a.swap(b);
-			}
+			Collections.shuffle(pieces);
 		}
 
 		// TODO May be it is better to use deep copy.

@@ -53,8 +53,8 @@ class Piece implements Cloneable {
 	 *            Original object.
 	 */
 	private Piece(Piece parent) {
-		id = parent.id;
-		polygon = (Polygon) parent.polygon.clone();
+		this.id = parent.id;
+		this.polygon = (Polygon) parent.polygon.clone();
 	}
 
 	/**
@@ -65,9 +65,7 @@ class Piece implements Cloneable {
 	 */
 	Piece(int vertices[][]) {
 		super();
-
-		counter++;
-		id = counter;
+		id = ++counter;
 
 		int v = 0;
 		Coordinate coordinates[] = new Coordinate[vertices.length + 1];
@@ -224,8 +222,8 @@ class Piece implements Cloneable {
 	 *            Angle of rotation.
 	 */
 	void turn(double dr) {
-		AffineTransformation transform = AffineTransformation
-				.rotationInstance(dr, polygon.getCentroid().getX(), polygon.getCentroid().getY());
+		AffineTransformation transform = AffineTransformation.rotationInstance(
+				dr, polygon.getCentroid().getX(), polygon.getCentroid().getY());
 		for (Coordinate c : polygon.getCoordinates()) {
 			transform.transform(c, c);
 		}
@@ -282,12 +280,11 @@ class Piece implements Cloneable {
 	 */
 	public void swap(Piece other) {
 		int id = other.id;
-		Polygon polygon = other.polygon;
-
 		other.id = this.id;
-		other.polygon = this.polygon;
-
 		this.id = id;
+
+		Polygon polygon = other.polygon;
+		other.polygon = this.polygon;
 		this.polygon = polygon;
 	}
 
@@ -306,16 +303,23 @@ class Piece implements Cloneable {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(Object other) {
+		if (this == other) {
 			return true;
-		if (obj == null)
+		}
+
+		if (other == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+
+		if (getClass() != other.getClass()) {
 			return false;
-		Piece other = (Piece) obj;
-		if (id != other.id)
+		}
+
+		if (this.id != ((Piece) other).id) {
 			return false;
+		}
+
 		return true;
 	}
 
