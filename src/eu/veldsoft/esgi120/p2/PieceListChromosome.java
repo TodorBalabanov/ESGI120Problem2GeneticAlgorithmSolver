@@ -84,19 +84,19 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	protected void checkValidity(List<Piece> list)
 			throws InvalidRepresentationException {
 		// TODO Use regular for loop.
-		for (Piece a : list) {
-			for (Piece b : list) {
-				if (a == b) {
-					continue;
-				}
-
-				if (a.equals(b) == true) {
-					throw new InvalidRepresentationException(
-							LocalizedFormats.DIFFERENT_ORIG_AND_PERMUTED_DATA,
-							a, b);
-				}
-			}
-		}
+//		for (Piece a : list) {
+//			for (Piece b : list) {
+//				if (a == b) {
+//					continue;
+//				}
+//
+//				if (a.equals(b) == true) {
+//					throw new InvalidRepresentationException(
+//							LocalizedFormats.DIFFERENT_ORIG_AND_PERMUTED_DATA,
+//							a, b);
+//				}
+//			}
+//		}
 	}
 
 	/**

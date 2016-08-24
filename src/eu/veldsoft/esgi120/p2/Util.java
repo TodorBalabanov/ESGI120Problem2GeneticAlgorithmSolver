@@ -179,10 +179,8 @@ class Util {
 			/*
 			 * If bound rectangles do not overlap the pieces do not overlap.
 			 */
-			if (current.getMaxX() < piece.getMinX()
-					|| piece.getMaxX() < current.getMinX()
-					|| current.getMaxY() < piece.getMinY()
-					|| piece.getMaxY() < current.getMinY()) {
+			if (current.getMaxX() < piece.getMinX() || piece.getMaxX() < current.getMinX()
+					|| current.getMaxY() < piece.getMinY() || piece.getMaxY() < current.getMinY()) {
 				continue;
 			}
 
@@ -211,22 +209,19 @@ class Util {
 		Scanner in = new Scanner(System.in);
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException(
-					"First number should be number of pieces.");
+			throw new RuntimeException("First number should be number of pieces.");
 		}
 		n = in.nextInt();
 
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException(
-					"Second number should be width of the sheet.");
+			throw new RuntimeException("Second number should be width of the sheet.");
 		}
 		X = in.nextInt();
 
 		if (in.hasNextInt() == false) {
 			in.close();
-			throw new RuntimeException(
-					"Third number should be height of the sheet.");
+			throw new RuntimeException("Third number should be height of the sheet.");
 		}
 		Y = in.nextInt();
 
@@ -318,24 +313,17 @@ class Util {
 	 * @param height
 	 *            Sheet height.
 	 */
-	static void saveSolution(String fileName, List<Piece> pieces, int width,
-			int height) {
-		BufferedImage image = new BufferedImage(width, height,
-				BufferedImage.TYPE_BYTE_BINARY, new IndexColorModel(4, 16,
-						new byte[] { (byte) 0, (byte) 128, (byte) 192,
-								(byte) 255, (byte) 128, (byte) 255, (byte) 128,
-								(byte) 255, (byte) 0, (byte) 0, (byte) 0,
-								(byte) 0, (byte) 0, (byte) 0, (byte) 128,
-								(byte) 255, }, new byte[] { (byte) 0,
-								(byte) 128, (byte) 192, (byte) 255, (byte) 0,
-								(byte) 0, (byte) 128, (byte) 255, (byte) 128,
-								(byte) 255, (byte) 128, (byte) 255, (byte) 0,
-								(byte) 0, (byte) 0, (byte) 0, },
-						new byte[] { (byte) 0, (byte) 128, (byte) 192,
-								(byte) 255, (byte) 0, (byte) 0, (byte) 0,
-								(byte) 0, (byte) 0, (byte) 0, (byte) 128,
-								(byte) 255, (byte) 128, (byte) 255, (byte) 128,
-								(byte) 255, }));
+	static void saveSolution(String fileName, List<Piece> pieces, int width, int height) {
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY,
+				new IndexColorModel(4, 16, new byte[] { (byte) 0, (byte) 128, (byte) 192, (byte) 255,
+						(byte) 128, (byte) 255, (byte) 128, (byte) 255, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+						(byte) 0, (byte) 0, (byte) 128, (byte) 255, },
+						new byte[] { (byte) 0, (byte) 128, (byte) 192, (byte) 255, (byte) 0, (byte) 0, (byte) 128,
+								(byte) 255, (byte) 128, (byte) 255, (byte) 128, (byte) 255, (byte) 0, (byte) 0,
+								(byte) 0, (byte) 0, },
+						new byte[] { (byte) 0, (byte) 128, (byte) 192, (byte) 255, (byte) 0, (byte) 0, (byte) 0,
+								(byte) 0, (byte) 0, (byte) 0, (byte) 128, (byte) 255, (byte) 128, (byte) 255,
+								(byte) 128, (byte) 255, }));
 
 		Graphics g = image.getGraphics();
 
@@ -374,8 +362,7 @@ class Util {
 	 * @param plates
 	 * @return
 	 */
-	public static Population randomInitialPopulation(int width, int height,
-			List<Piece> plates) {
+	public static Population randomInitialPopulation(int width, int height, List<Piece> plates) {
 		List<Chromosome> list = new ArrayList<Chromosome>();
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			/*
@@ -424,25 +411,19 @@ class Util {
 				Collections.sort(pieces, new WidthComparator());
 				break;
 			case 7:
-				Collections.sort(pieces,
-						Collections.reverseOrder(new WidthComparator()));
+				Collections.sort(pieces, Collections.reverseOrder(new WidthComparator()));
 				break;
 			case 8:
 				Collections.sort(pieces, new HeightComparator());
 				break;
 			case 9:
-				Collections.sort(pieces,
-						Collections.reverseOrder(new HeightComparator()));
+				Collections.sort(pieces, Collections.reverseOrder(new HeightComparator()));
 				break;
 			case 10:
-				Collections.sort(pieces,
-						new BoundRectangleDimensionsComparator());
+				Collections.sort(pieces, new BoundRectangleDimensionsComparator());
 				break;
 			case 11:
-				Collections
-						.sort(pieces,
-								Collections
-										.reverseOrder(new BoundRectangleDimensionsComparator()));
+				Collections.sort(pieces, Collections.reverseOrder(new BoundRectangleDimensionsComparator()));
 				break;
 			}
 

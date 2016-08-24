@@ -78,9 +78,7 @@ class Piece implements Cloneable {
 		 */
 		coordinates[v] = new Coordinate(vertices[0][0], vertices[0][1], 0);
 
-		this.polygon = new Polygon(
-				new GeometryFactory().createLinearRing(coordinates), null,
-				new GeometryFactory());
+		this.polygon = new Polygon(new GeometryFactory().createLinearRing(coordinates), null, new GeometryFactory());
 	}
 
 	/**
@@ -222,8 +220,8 @@ class Piece implements Cloneable {
 	 *            Angle of rotation.
 	 */
 	void turn(double dr) {
-		AffineTransformation transform = AffineTransformation.rotationInstance(
-				dr, polygon.getCentroid().getX(), polygon.getCentroid().getY());
+		AffineTransformation transform = AffineTransformation.rotationInstance(dr, polygon.getCentroid().getX(),
+				polygon.getCentroid().getY());
 		for (Coordinate c : polygon.getCoordinates()) {
 			transform.transform(c, c);
 		}
@@ -237,8 +235,7 @@ class Piece implements Cloneable {
 	 *            Distance to move on.
 	 */
 	public void moveX(double d) {
-		AffineTransformation transform = AffineTransformation
-				.translationInstance(d, 0);
+		AffineTransformation transform = AffineTransformation.translationInstance(d, 0);
 		for (Coordinate c : polygon.getCoordinates()) {
 			transform.transform(c, c);
 		}
@@ -252,8 +249,7 @@ class Piece implements Cloneable {
 	 *            Distance to move on.
 	 */
 	public void moveY(double d) {
-		AffineTransformation transform = AffineTransformation
-				.translationInstance(0, d);
+		AffineTransformation transform = AffineTransformation.translationInstance(0, d);
 		for (Coordinate c : polygon.getCoordinates()) {
 			transform.transform(c, c);
 		}
@@ -264,8 +260,7 @@ class Piece implements Cloneable {
 	 * Flip the by the primary diagonal.
 	 */
 	public void flip() {
-		AffineTransformation transform = AffineTransformation
-				.reflectionInstance(1000000, 1000000);
+		AffineTransformation transform = AffineTransformation.reflectionInstance(1000000, 1000000);
 		for (Coordinate c : polygon.getCoordinates()) {
 			transform.transform(c, c);
 		}
@@ -330,9 +325,7 @@ class Piece implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return "Piece [id=" + id + ", polygon="
-				+ Arrays.toString(polygon.getCoordinates()) + ", minX="
-				+ getMinX() + ", maxX=" + getMaxX() + ", minY=" + getMinY()
-				+ ", maxY=" + getMaxY() + "]";
+		return "Piece [id=" + id + ", polygon=" + Arrays.toString(polygon.getCoordinates()) + ", minX=" + getMinX()
+				+ ", maxX=" + getMaxX() + ", minY=" + getMinY() + ", maxY=" + getMaxY() + "]";
 	}
 }
