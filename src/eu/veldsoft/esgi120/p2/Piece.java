@@ -36,7 +36,7 @@ class Piece implements Cloneable {
 	private void invalidate() {
 		polygon.geometryChanged();
 		if (polygon.isValid() == false) {
-			//TODO throw new RuntimeException("" + toString());
+			// TODO throw new RuntimeException("" + toString());
 		}
 	}
 
@@ -102,7 +102,9 @@ class Piece implements Cloneable {
 		 */
 		coordinates[v] = new Coordinate(vertices[0][0], vertices[0][1], 0);
 
-		polygon = new Polygon(new GeometryFactory().createLinearRing(coordinates), null, new GeometryFactory());
+		polygon = new Polygon(
+				new GeometryFactory().createLinearRing(coordinates), null,
+				new GeometryFactory());
 
 		invalidate();
 	}
@@ -247,8 +249,8 @@ class Piece implements Cloneable {
 	 *            Angle of rotation.
 	 */
 	void rotate(double dr) {
-		transform(
-				AffineTransformation.rotationInstance(dr, polygon.getCentroid().getX(), polygon.getCentroid().getY()));
+		transform(AffineTransformation.rotationInstance(dr, polygon
+				.getCentroid().getX(), polygon.getCentroid().getY()));
 	}
 
 	/**
@@ -275,7 +277,8 @@ class Piece implements Cloneable {
 	 * Flip the by the primary diagonal.
 	 */
 	public void flip() {
-		transform(AffineTransformation.reflectionInstance(getMinX(), getMinY(), getMaxX(), getMaxY()));
+		transform(AffineTransformation.reflectionInstance(getMinX(), getMinY(),
+				getMaxX(), getMaxY()));
 	}
 
 	/**
@@ -336,7 +339,9 @@ class Piece implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return "Piece [id=" + id + ", polygon=" + Arrays.toString(polygon.getCoordinates()) + ", minX=" + getMinX()
-				+ ", maxX=" + getMaxX() + ", minY=" + getMinY() + ", maxY=" + getMaxY() + "]";
+		return "Piece [id=" + id + ", polygon="
+				+ Arrays.toString(polygon.getCoordinates()) + ", minX="
+				+ getMinX() + ", maxX=" + getMaxX() + ", minY=" + getMinY()
+				+ ", maxY=" + getMaxY() + "]";
 	}
 }

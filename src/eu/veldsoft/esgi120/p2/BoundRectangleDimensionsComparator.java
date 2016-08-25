@@ -13,6 +13,7 @@ class BoundRectangleDimensionsComparator implements Comparator<Piece> {
 	 */
 	@Override
 	public int compare(Piece a, Piece b) {
-		return (int) (b.getWidth() * b.getHeight() - a.getWidth() * a.getHeight());
+		return (int) (b.getWidth() * b.getHeight() - a.getWidth()
+				* a.getHeight());
 	}
 }

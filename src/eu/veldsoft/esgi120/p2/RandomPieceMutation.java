@@ -18,7 +18,8 @@ public class RandomPieceMutation implements MutationPolicy {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Chromosome mutate(Chromosome original) throws MathIllegalArgumentException {
+	public Chromosome mutate(Chromosome original)
+			throws MathIllegalArgumentException {
 		if (original instanceof PieceListChromosome == false) {
 			throw new IllegalArgumentException();
 		}
