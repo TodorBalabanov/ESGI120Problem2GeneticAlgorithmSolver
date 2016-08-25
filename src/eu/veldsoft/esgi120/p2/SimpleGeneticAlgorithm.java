@@ -205,7 +205,7 @@ class SimpleGeneticAlgorithm {
 
 		// TODO Find better way to select random angle.
 		if (Util.PRNG.nextBoolean() == true) {
-			piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
+			piece.rotate(2 * Math.PI * Util.PRNG.nextDouble());
 		}
 
 		/*

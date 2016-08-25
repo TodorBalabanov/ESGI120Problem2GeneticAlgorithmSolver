@@ -121,7 +121,7 @@ class Util {
 		 * Rotate all pieces.
 		 */
 		for (Piece piece : pieces) {
-			piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
+			piece.rotate(2 * Math.PI * Util.PRNG.nextDouble());
 		}
 	}
 

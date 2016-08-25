@@ -247,7 +247,7 @@ class Piece implements Cloneable {
 	 * @param dr
 	 *            Angle of rotation.
 	 */
-	void turn(double dr) {
+	void rotate(double dr) {
 		transform(
 				AffineTransformation.rotationInstance(dr, polygon.getCentroid().getX(), polygon.getCentroid().getY()));
 	}

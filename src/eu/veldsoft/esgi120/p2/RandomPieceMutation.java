@@ -31,7 +31,7 @@ public class RandomPieceMutation implements MutationPolicy {
 		 * Change piece angle.
 		 */
 		if (Util.PRNG.nextDouble() < Util.ROTATION_MUTATION_RATE) {
-			piece.turn(2 * Math.PI * Util.PRNG.nextDouble());
+			piece.rotate(2 * Math.PI * Util.PRNG.nextDouble());
 		}
 
 		/*
