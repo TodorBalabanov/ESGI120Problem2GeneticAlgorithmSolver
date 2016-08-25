@@ -37,7 +37,7 @@ class Piece implements Cloneable {
 		polygon.normalize();
 		polygon.geometryChanged();
 		if (polygon.isValid() == false) {
-			throw new RuntimeException("" + toString());
+			//TODO throw new RuntimeException("" + toString());
 		}
 	}
 

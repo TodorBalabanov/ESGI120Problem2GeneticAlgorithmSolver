@@ -3,6 +3,7 @@ package eu.veldsoft.esgi120.p2;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.genetics.AbstractListChromosome;
 import org.apache.commons.math3.genetics.InvalidRepresentationException;
 
@@ -76,6 +77,10 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	protected void checkValidity(List<Piece> list) throws InvalidRepresentationException {
 		// TODO Use regular for loop.
 		// for (Piece a : list) {
+		// if(a.getPolygon().isValid() == false) {
+		// throw new InvalidRepresentationException(
+		// LocalizedFormats.INVALID_IMPLEMENTATION, a);
+		// }
 		// for (Piece b : list) {
 		// if (a == b) {
 		// continue;
