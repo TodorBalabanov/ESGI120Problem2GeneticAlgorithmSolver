@@ -31,6 +31,30 @@ class Piece implements Cloneable {
 	private Polygon polygon = null;
 
 	/**
+	 * Update internal data structures.
+	 */
+	private void invalidate() {
+		polygon.normalize();
+		polygon.geometryChanged();
+		if (polygon.isValid() == false) {
+			throw new RuntimeException("" + toString());
+		}
+	}
+
+	/**
+	 * Apply affine transformation.
+	 * 
+	 * @param transform
+	 *            Transformation object.
+	 */
+	private void transform(AffineTransformation transform) {
+		for (Coordinate c : polygon.getCoordinates()) {
+			transform.transform(c, c);
+		}
+		invalidate();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -52,8 +76,10 @@ class Piece implements Cloneable {
 	 *            Original object.
 	 */
 	private Piece(Piece parent) {
-		this.id = parent.id;
-		this.polygon = (Polygon) parent.polygon.clone();
+		id = parent.id;
+		polygon = (Polygon) parent.polygon.clone();
+
+		invalidate();
 	}
 
 	/**
@@ -77,7 +103,9 @@ class Piece implements Cloneable {
 		 */
 		coordinates[v] = new Coordinate(vertices[0][0], vertices[0][1], 0);
 
-		this.polygon = new Polygon(new GeometryFactory().createLinearRing(coordinates), null, new GeometryFactory());
+		polygon = new Polygon(new GeometryFactory().createLinearRing(coordinates), null, new GeometryFactory());
+
+		invalidate();
 	}
 
 	/**
@@ -220,12 +248,8 @@ class Piece implements Cloneable {
 	 *            Angle of rotation.
 	 */
 	void turn(double dr) {
-		AffineTransformation transform = AffineTransformation.rotationInstance(dr, polygon.getCentroid().getX(),
-				polygon.getCentroid().getY());
-		for (Coordinate c : polygon.getCoordinates()) {
-			transform.transform(c, c);
-		}
-		polygon.geometryChanged();
+		transform(
+				AffineTransformation.rotationInstance(dr, polygon.getCentroid().getX(), polygon.getCentroid().getY()));
 	}
 
 	/**
@@ -235,11 +259,7 @@ class Piece implements Cloneable {
 	 *            Distance to move on.
 	 */
 	public void moveX(double d) {
-		AffineTransformation transform = AffineTransformation.translationInstance(d, 0);
-		for (Coordinate c : polygon.getCoordinates()) {
-			transform.transform(c, c);
-		}
-		polygon.geometryChanged();
+		transform(AffineTransformation.translationInstance(d, 0));
 	}
 
 	/**
@@ -249,22 +269,14 @@ class Piece implements Cloneable {
 	 *            Distance to move on.
 	 */
 	public void moveY(double d) {
-		AffineTransformation transform = AffineTransformation.translationInstance(0, d);
-		for (Coordinate c : polygon.getCoordinates()) {
-			transform.transform(c, c);
-		}
-		polygon.geometryChanged();
+		transform(AffineTransformation.translationInstance(0, d));
 	}
 
 	/**
 	 * Flip the by the primary diagonal.
 	 */
 	public void flip() {
-		AffineTransformation transform = AffineTransformation.reflectionInstance(1000000, 1000000);
-		for (Coordinate c : polygon.getCoordinates()) {
-			transform.transform(c, c);
-		}
-		polygon.geometryChanged();
+		transform(AffineTransformation.reflectionInstance(getMinX(), getMinY(), getMaxX(), getMaxY()));
 	}
 
 	/**
