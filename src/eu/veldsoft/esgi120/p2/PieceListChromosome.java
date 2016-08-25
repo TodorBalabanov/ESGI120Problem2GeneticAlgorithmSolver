@@ -253,7 +253,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 				 */
 				current.moveX(+1);
 			}
-
+			
 			/*
 			 * Put the piece in the best available coordinates.
 			 */

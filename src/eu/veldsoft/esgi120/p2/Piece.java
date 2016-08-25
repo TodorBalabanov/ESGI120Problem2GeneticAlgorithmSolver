@@ -34,7 +34,6 @@ class Piece implements Cloneable {
 	 * Update internal data structures.
 	 */
 	private void invalidate() {
-		polygon.normalize();
 		polygon.geometryChanged();
 		if (polygon.isValid() == false) {
 			//TODO throw new RuntimeException("" + toString());
