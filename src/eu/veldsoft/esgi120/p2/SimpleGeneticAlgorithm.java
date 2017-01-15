@@ -471,10 +471,8 @@ class SimpleGeneticAlgorithm {
 			/*
 			 * Add current piece in the ordered set and the front set.
 			 */
-			Coordinate points[] = stack.symDifference(current.getPolygon()).getCoordinates();
-			points = Arrays.copyOf(points, points.length + 1);
-			points[points.length - 1] = (Coordinate) points[0].clone();
-			stack = new Polygon(GEOMETRY_FACTORY.createLinearRing(points), null, GEOMETRY_FACTORY);
+			stack = (Polygon) SnapOverlayOp.union(stack, current.getPolygon()).getBoundary().convexHull();
+			stack.normalize();
 		}
 	}
 

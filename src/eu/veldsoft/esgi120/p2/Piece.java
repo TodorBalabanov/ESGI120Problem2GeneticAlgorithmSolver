@@ -31,6 +31,9 @@ class Piece implements Cloneable {
 	 */
 	private Polygon polygon = null;
 
+	/**
+	 * Make all points integer numbers.
+	 */
 	private void roundFloatingPointCoordinatesToInteger() {
 		for (Coordinate c : polygon.getCoordinates()) {
 			c.x = Math.round(c.x);
@@ -44,7 +47,7 @@ class Piece implements Cloneable {
 	 */
 	private void invalidate() {
 		// TODO Image output is discrete pixels and floating points are problem.
-		roundFloatingPointCoordinatesToInteger();
+		// roundFloatingPointCoordinatesToInteger();
 
 		polygon.geometryChanged();
 
@@ -154,7 +157,7 @@ class Piece implements Cloneable {
 		try {
 			// TODO May be it is better to use SnapOverlayOp or OverlayOp
 			// instead of SnapIfNeededOverlayOp.
-			result = polygon.overlaps(shape);
+			result = polygon.overlaps(shape) || polygon.intersects(shape);
 		} catch (TopologyException ex) {
 			/*
 			 * http://stackoverflow.com/questions/17565121/geotools-com-
@@ -193,10 +196,10 @@ class Piece implements Cloneable {
 	 */
 	public boolean overlaps(Piece piece) {
 		boolean result = false;
-
+		
 		try {
 			// TODO May be it is better to use SnapOverlayOp or OverlayOp.
-			result = polygon.overlaps(piece.polygon);
+			result = polygon.overlaps(piece.polygon) || polygon.intersects(piece.polygon);
 		} catch (TopologyException ex) {
 			/*
 			 * http://stackoverflow.com/questions/17565121/geotools-com-
