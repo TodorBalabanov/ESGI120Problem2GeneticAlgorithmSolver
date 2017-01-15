@@ -1,8 +1,16 @@
 package eu.veldsoft.esgi120.p2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.overlay.snap.SnapOverlayOp;
 
 /**
  * Genetic algorithm implementation.
@@ -10,6 +18,11 @@ import java.util.List;
  * @author Todor Balabanov
  */
 class SimpleGeneticAlgorithm {
+	/**
+	 * Geometry factory.
+	 */
+	private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+
 	/**
 	 * First parent.
 	 */
@@ -317,20 +330,15 @@ class SimpleGeneticAlgorithm {
 	 *            Sheet height.
 	 */
 	public void pack2(int width, int height) {
+		/*
+		 * Pieces already placed on the sheet.
+		 */
 		List<Piece> front = new ArrayList<Piece>();
-		// Geometry stack = new Polygon(
-		// new GeometryFactory()
-		// .createLinearRing(new Coordinate[] { new Coordinate(0, -1, 0), new
-		// Coordinate(width - 1, -1, 0),
-		// new Coordinate(width - 1, 0, 0), new Coordinate(0, 0, 0), new
-		// Coordinate(0, -1, 0) }),
-		// null, new GeometryFactory());
 
 		/*
 		 * Virtual Y boundary.
 		 */
 		double level = 0;
-		// double level = stack.getEnvelopeInternal().getMaxX();
 
 		/*
 		 * Place all pieces on the sheet
@@ -348,7 +356,7 @@ class SimpleGeneticAlgorithm {
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				while (current.getMinY() > 0 && Util.overlap(current, front/* stack */) == false) {
+				while (current.getMinY() > 0 && Util.overlap(current, front) == false) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of
@@ -386,7 +394,87 @@ class SimpleGeneticAlgorithm {
 			 * Add current piece in the ordered set and the front set.
 			 */
 			front.add(current);
-			// stack = SnapOverlayOp.union(stack, current.getPolygon());
+		}
+	}
+
+	/**
+	 * Pack function which uses exact boundaries of the polygons in the sheet
+	 * with specified dimensions.
+	 * 
+	 * @param width
+	 *            Sheet width.
+	 * @param height
+	 *            Sheet height.
+	 */
+	public void pack3(int width, int height) {
+		Polygon stack = new Polygon(
+				GEOMETRY_FACTORY
+						.createLinearRing(new Coordinate[] { new Coordinate(0, -2, 0), new Coordinate(width - 1, -2, 0),
+								new Coordinate(width - 1, 0, 0), new Coordinate(0, 0, 0), new Coordinate(0, -2, 0) }),
+				null, GEOMETRY_FACTORY);
+
+		/*
+		 * Virtual Y boundary.
+		 */
+		double level = stack.getEnvelopeInternal().getMaxX();
+
+		/*
+		 * Place all pieces on the sheet
+		 */
+		for (Piece current : population.get(worstIndex)) {
+			double bestLeft = 0;
+			double bestTop = level;
+			current.moveX(-current.getMinX());
+			current.moveY(-current.getMinY() + level);
+
+			/*
+			 * Move across sheet width.
+			 */
+			while (current.getMaxX() < width) {
+				/*
+				 * Touch sheet bounds of touch other piece.
+				 */
+				while (current.getMinY() > 0 && Util.overlap(current, stack) == false) {
+					current.moveY(-1);
+				}
+				// TODO Plus one may be is wrong if the piece should be part of
+				// the area.
+				current.moveY(+2);
+
+				/*
+				 * Keep the best found position.
+				 */
+				if (current.getMinY() < bestTop) {
+					bestTop = current.getMinY();
+					bestLeft = current.getMinX();
+				}
+
+				/*
+				 * Try next position on right.
+				 */
+				current.moveX(+1);
+			}
+
+			/*
+			 * Put the piece in the best available coordinates.
+			 */
+			current.moveX(-current.getMinX() + bestLeft);
+			current.moveY(-current.getMinY() + bestTop);
+
+			/*
+			 * Shift sheet level if the current piece is out of previous bounds.
+			 */
+			if (current.getMaxY() > level) {
+				level = current.getMaxY() + 1;
+			}
+
+			/*
+			 * Add current piece in the ordered set and the front set.
+			 */
+			Coordinate points[] = stack.symDifference(current.getPolygon()).getCoordinates();
+			points = Arrays.copyOf(points, points.length + 1);
+			points[points.length - 1] = (Coordinate) points[0].clone();
+			stack = new Polygon(GEOMETRY_FACTORY.createLinearRing(points), null, GEOMETRY_FACTORY);
 		}
 	}
 

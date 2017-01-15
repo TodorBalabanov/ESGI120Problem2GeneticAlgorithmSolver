@@ -63,6 +63,7 @@ public class Main {
 			// TODO Use pack2 for better or pack1 for faster packing.
 			// ga.pack1(X, Y);
 			ga.pack2(X, Y);
+			// ga.pack3(X, Y);
 			ga.evaluate();
 		}
 		System.out.println();

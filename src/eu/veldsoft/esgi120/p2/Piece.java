@@ -153,8 +153,7 @@ class Piece implements Cloneable {
 
 		try {
 			// TODO May be it is better to use SnapOverlayOp or OverlayOp
-			// instead of
-			// SnapIfNeededOverlayOp.
+			// instead of SnapIfNeededOverlayOp.
 			result = polygon.overlaps(shape);
 		} catch (TopologyException ex) {
 			/*
