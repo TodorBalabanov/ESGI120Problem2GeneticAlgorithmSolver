@@ -217,8 +217,8 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 		// List<Piece> front = new ArrayList<Piece>();
 		Geometry stack = new Polygon(
 				new GeometryFactory()
-						.createLinearRing(new Coordinate[] { new Coordinate(0, -1, 0), new Coordinate(width - 1, -1, 0),
-								new Coordinate(width - 1, 0, 0), new Coordinate(0, 0, 0), new Coordinate(0, -1, 0) }),
+						.createLinearRing(new Coordinate[] { new Coordinate(0, -2, 0), new Coordinate(width - 1, -2, 0),
+								new Coordinate(width - 1, 0, 0), new Coordinate(0, 0, 0), new Coordinate(0, -2, 0) }),
 				null, new GeometryFactory());
 
 		/*

@@ -29,7 +29,7 @@ public class Main {
 	private static void optimization1(int X, int Y, List<Piece> pieces) {
 		System.err.println("Start ...");
 		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(Util.POPULATION_SIZE, pieces);
-		System.err.println("Genetic algorithm crated ...");
+		System.err.println("Genetic algorithm created ...");
 		ga.evaluateAll(X, Y);
 		System.err.println("Initial population evaluated ...");
 
@@ -88,7 +88,7 @@ public class Main {
 
 		GeneticAlgorithm algorithm = new GeneticAlgorithm(new PieceOrderedCrossover(), Util.CROSSOVER_RATE,
 				new RandomPieceMutation(), Util.MUTATION_RATE, new TournamentSelection(Util.TOURNAMENT_ARITY));
-		System.err.println("Genetic algorithm crated ...");
+		System.err.println("Genetic algorithm created ...");
 		optimized = algorithm.evolve(initial, new FixedElapsedTime(Util.OPTIMIZATION_TIMEOUT_SECONDS));
 		System.err.println("Optimization finished ...");
 
@@ -117,7 +117,7 @@ public class Main {
 		// TODO Do profiling to find the bottle necks in the code.
 		// TODO Write LSSC 2017 paper.
 
-		optimization1(X, Y, pieces);
-		// optimization2(X, Y, pieces);
+		// optimization1(X, Y, pieces);
+		optimization2(X, Y, pieces);
 	}
 }

@@ -149,9 +149,39 @@ class Piece implements Cloneable {
 	 * @return Intersection of the pieces as geometry object.
 	 */
 	public boolean overlaps(Geometry shape) {
-		// TODO May be it is better to use SnapOverlayOp or OverlayOp instead of
-		// SnapIfNeededOverlayOp.
-		return polygon.overlaps(shape);
+		boolean result = false;
+
+		try {
+			// TODO May be it is better to use SnapOverlayOp or OverlayOp
+			// instead of
+			// SnapIfNeededOverlayOp.
+			result = polygon.overlaps(shape);
+		} catch (TopologyException ex) {
+			/*
+			 * http://stackoverflow.com/questions/17565121/geotools-com-
+			 * vividsolutions-jts-geom-topologyexception-side-location-conflict
+			 * 
+			 * Update jts to 1.13 from 1.12
+			 * 
+			 * update getools to 10-SNAPSHOT from 9.0
+			 * 
+			 * then validation operation returned false. Description said that
+			 * the points in some locations were too close to each other and
+			 * geotools thought that linear ring intersects itself. I've
+			 * truncated coodinates to 5 digits after dot and it helped. The
+			 * precision was too high.
+			 * 
+			 * The problem is solved.
+			 * 
+			 * ---
+			 * 
+			 * May be it will be safer to return true for overlapping even if
+			 * there is no one.
+			 */
+			return true;
+		}
+
+		return result;
 	}
 
 	/**
