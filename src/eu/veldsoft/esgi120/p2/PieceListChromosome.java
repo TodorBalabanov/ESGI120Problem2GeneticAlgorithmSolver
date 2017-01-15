@@ -42,8 +42,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 * @param representation
 	 * @throws InvalidRepresentationException
 	 */
-	public PieceListChromosome(Piece[] representation)
-			throws InvalidRepresentationException {
+	public PieceListChromosome(Piece[] representation) throws InvalidRepresentationException {
 		super(representation);
 		wasModified = true;
 	}
@@ -63,8 +62,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 * @param representation
 	 * @throws InvalidRepresentationException
 	 */
-	public PieceListChromosome(List<Piece> representation)
-			throws InvalidRepresentationException {
+	public PieceListChromosome(List<Piece> representation) throws InvalidRepresentationException {
 		super(representation);
 		wasModified = true;
 	}
@@ -99,8 +97,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void checkValidity(List<Piece> list)
-			throws InvalidRepresentationException {
+	protected void checkValidity(List<Piece> list) throws InvalidRepresentationException {
 		// TODO Use regular for loop.
 		// for (Piece a : list) {
 		// if(a.getPolygon().isValid() == false) {
@@ -125,8 +122,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AbstractListChromosome<Piece> newFixedLengthChromosome(
-			List<Piece> list) {
+	public AbstractListChromosome<Piece> newFixedLengthChromosome(List<Piece> list) {
 		return new PieceListChromosome(list, true);
 	}
 
@@ -220,11 +216,9 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 	public PieceListChromosome pack2(int width, int height) {
 		// List<Piece> front = new ArrayList<Piece>();
 		Geometry stack = new Polygon(
-				new GeometryFactory().createLinearRing(new Coordinate[] {
-						new Coordinate(0, -1, 0),
-						new Coordinate(width - 1, -1, 0),
-						new Coordinate(width - 1, 0, 0),
-						new Coordinate(0, 0, 0), new Coordinate(0, -1, 0) }),
+				new GeometryFactory()
+						.createLinearRing(new Coordinate[] { new Coordinate(0, -1, 0), new Coordinate(width - 1, -1, 0),
+								new Coordinate(width - 1, 0, 0), new Coordinate(0, 0, 0), new Coordinate(0, -1, 0) }),
 				null, new GeometryFactory());
 
 		/*
@@ -257,8 +251,7 @@ public class PieceListChromosome extends AbstractListChromosome<Piece> {
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				while (current.getMinY() > 0
-						&& Util.overlap(current, /* front */stack) == false) {
+				while (current.getMinY() > 0 && Util.overlap(current, /* front */stack) == false) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of

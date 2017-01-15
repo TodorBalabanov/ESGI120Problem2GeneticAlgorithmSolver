@@ -104,25 +104,19 @@ class SimpleGeneticAlgorithm {
 				Collections.sort(pieces, new WidthComparator());
 				break;
 			case 7:
-				Collections.sort(pieces,
-						Collections.reverseOrder(new WidthComparator()));
+				Collections.sort(pieces, Collections.reverseOrder(new WidthComparator()));
 				break;
 			case 8:
 				Collections.sort(pieces, new HeightComparator());
 				break;
 			case 9:
-				Collections.sort(pieces,
-						Collections.reverseOrder(new HeightComparator()));
+				Collections.sort(pieces, Collections.reverseOrder(new HeightComparator()));
 				break;
 			case 10:
-				Collections.sort(pieces,
-						new BoundRectangleDimensionsComparator());
+				Collections.sort(pieces, new BoundRectangleDimensionsComparator());
 				break;
 			case 11:
-				Collections
-						.sort(pieces,
-								Collections
-										.reverseOrder(new BoundRectangleDimensionsComparator()));
+				Collections.sort(pieces, Collections.reverseOrder(new BoundRectangleDimensionsComparator()));
 				break;
 			}
 
@@ -163,12 +157,10 @@ class SimpleGeneticAlgorithm {
 		worstIndex = 0;
 
 		for (int index = 0; index < fitness.size(); index++) {
-			if (fitness.get(index).doubleValue() < fitness.get(bestIndex)
-					.doubleValue()) {
+			if (fitness.get(index).doubleValue() < fitness.get(bestIndex).doubleValue()) {
 				bestIndex = index;
 			}
-			if (fitness.get(index).doubleValue() > fitness.get(worstIndex)
-					.doubleValue()) {
+			if (fitness.get(index).doubleValue() > fitness.get(worstIndex).doubleValue()) {
 				worstIndex = index;
 			}
 		}
@@ -181,8 +173,7 @@ class SimpleGeneticAlgorithm {
 		do {
 			firstIndex = Util.PRNG.nextInt(population.size());
 			secondIndex = Util.PRNG.nextInt(population.size());
-		} while (firstIndex == secondIndex || firstIndex == worstIndex
-				|| secondIndex == worstIndex);
+		} while (firstIndex == secondIndex || firstIndex == worstIndex || secondIndex == worstIndex);
 	}
 
 	/**
@@ -242,8 +233,7 @@ class SimpleGeneticAlgorithm {
 		List<Piece> result = population.get(worstIndex);
 
 		for (Piece piece : result) {
-			while (piece.getMinX() < 0 || piece.getMaxX() >= width
-					|| piece.getMinY() < 0
+			while (piece.getMinX() < 0 || piece.getMaxX() >= width || piece.getMinY() < 0
 					|| piece.getMaxY() + piece.getHeight() >= height
 					|| Util.overlap(piece, population.get(worstIndex)) == true) {
 				piece.moveX(Util.PRNG.nextInt((int) (width - piece.getWidth())));
@@ -346,14 +336,6 @@ class SimpleGeneticAlgorithm {
 		 * Place all pieces on the sheet
 		 */
 		for (Piece current : population.get(worstIndex)) {
-			/*
-			 * Rotate on +90 or -90 degrees if the piece does not fit in the
-			 * sheet.
-			 */
-			if (current.getWidth() > width) {
-				current.flip();
-			}
-
 			double bestLeft = 0;
 			double bestTop = level;
 			current.moveX(-current.getMinX());
@@ -366,8 +348,7 @@ class SimpleGeneticAlgorithm {
 				/*
 				 * Touch sheet bounds of touch other piece.
 				 */
-				while (current.getMinY() > 0
-						&& Util.overlap(current, front/* stack */) == false) {
+				while (current.getMinY() > 0 && Util.overlap(current, front/* stack */) == false) {
 					current.moveY(-1);
 				}
 				// TODO Plus one may be is wrong if the piece should be part of

@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.geom.util.AffineTransformation;
 
 /**
@@ -30,11 +31,23 @@ class Piece implements Cloneable {
 	 */
 	private Polygon polygon = null;
 
+	private void roundFloatingPointCoordinatesToInteger() {
+		for (Coordinate c : polygon.getCoordinates()) {
+			c.x = Math.round(c.x);
+			c.y = Math.round(c.y);
+			c.z = Math.round(c.z);
+		}
+	}
+
 	/**
 	 * Update internal data structures.
 	 */
 	private void invalidate() {
+		// TODO Image output is discrete pixels and floating points are problem.
+		roundFloatingPointCoordinatesToInteger();
+
 		polygon.geometryChanged();
+
 		if (polygon.isValid() == false) {
 			// TODO throw new RuntimeException("" + toString());
 		}
@@ -102,9 +115,7 @@ class Piece implements Cloneable {
 		 */
 		coordinates[v] = new Coordinate(vertices[0][0], vertices[0][1], 0);
 
-		polygon = new Polygon(
-				new GeometryFactory().createLinearRing(coordinates), null,
-				new GeometryFactory());
+		polygon = new Polygon(new GeometryFactory().createLinearRing(coordinates), null, new GeometryFactory());
 
 		invalidate();
 	}
@@ -152,8 +163,37 @@ class Piece implements Cloneable {
 	 * @return Intersection of the pieces as geometry object.
 	 */
 	public boolean overlaps(Piece piece) {
-		// TODO May be it is better to use SnapOverlayOp or OverlayOp.
-		return polygon.overlaps(piece.polygon);
+		boolean result = false;
+
+		try {
+			// TODO May be it is better to use SnapOverlayOp or OverlayOp.
+			result = polygon.overlaps(piece.polygon);
+		} catch (TopologyException ex) {
+			/*
+			 * http://stackoverflow.com/questions/17565121/geotools-com-
+			 * vividsolutions-jts-geom-topologyexception-side-location-conflict
+			 * 
+			 * Update jts to 1.13 from 1.12
+			 * 
+			 * update getools to 10-SNAPSHOT from 9.0
+			 * 
+			 * then validation operation returned false. Description said that
+			 * the points in some locations were too close to each other and
+			 * geotools thought that linear ring intersects itself. I've
+			 * truncated coodinates to 5 digits after dot and it helped. The
+			 * precision was too high.
+			 * 
+			 * The problem is solved.
+			 * 
+			 * ---
+			 * 
+			 * May be it will be safer to return true for overlapping even if
+			 * there is no one.
+			 */
+			return true;
+		}
+
+		return result;
 	}
 
 	/**
@@ -249,8 +289,8 @@ class Piece implements Cloneable {
 	 *            Angle of rotation.
 	 */
 	void rotate(double dr) {
-		transform(AffineTransformation.rotationInstance(dr, polygon
-				.getCentroid().getX(), polygon.getCentroid().getY()));
+		transform(
+				AffineTransformation.rotationInstance(dr, polygon.getCentroid().getX(), polygon.getCentroid().getY()));
 	}
 
 	/**
@@ -277,8 +317,7 @@ class Piece implements Cloneable {
 	 * Flip the by the primary diagonal.
 	 */
 	public void flip() {
-		transform(AffineTransformation.reflectionInstance(getMinX(), getMinY(),
-				getMaxX(), getMaxY()));
+		transform(AffineTransformation.reflectionInstance(getMinX(), getMinY(), getMaxX(), getMaxY()));
 	}
 
 	/**
@@ -339,9 +378,7 @@ class Piece implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return "Piece [id=" + id + ", polygon="
-				+ Arrays.toString(polygon.getCoordinates()) + ", minX="
-				+ getMinX() + ", maxX=" + getMaxX() + ", minY=" + getMinY()
-				+ ", maxY=" + getMaxY() + "]";
+		return "Piece [id=" + id + ", polygon=" + Arrays.toString(polygon.getCoordinates()) + ", minX=" + getMinX()
+				+ ", maxX=" + getMaxX() + ", minY=" + getMinY() + ", maxY=" + getMaxY() + "]";
 	}
 }

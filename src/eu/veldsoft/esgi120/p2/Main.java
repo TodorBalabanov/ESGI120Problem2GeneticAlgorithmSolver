@@ -28,8 +28,7 @@ public class Main {
 	 */
 	private static void optimization1(int X, int Y, List<Piece> pieces) {
 		System.err.println("Start ...");
-		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(
-				Util.POPULATION_SIZE, pieces);
+		SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(Util.POPULATION_SIZE, pieces);
 		System.err.println("Genetic algorithm crated ...");
 		ga.evaluateAll(X, Y);
 		System.err.println("Initial population evaluated ...");
@@ -50,12 +49,11 @@ public class Main {
 			 */
 			if (System.currentTimeMillis() - last >= TEMP_FILE_SAVE_INTERVAL) {
 				last = System.currentTimeMillis();
-				Util.saveSolution("time" + (new Date()).getTime() + "progress"
-						+ (int) (100D * g / NUMBER_OF_NEW_INDIVIDUALS)
-						+ "fitness" + (int) Math.ceil(ga.getBestFitness())
-						+ ".bmp", ga.getBest(), X, Y);
-				System.out.println("" + (new Date()).getTime() + "\t"
-						+ (100D * g / NUMBER_OF_NEW_INDIVIDUALS) + "\t"
+				Util.saveSolution(
+						"time" + (new Date()).getTime() + "progress" + (int) (100D * g / NUMBER_OF_NEW_INDIVIDUALS)
+								+ "fitness" + (int) Math.ceil(ga.getBestFitness()) + ".bmp",
+						ga.getBest(), X, Y);
+				System.out.println("" + (new Date()).getTime() + "\t" + (100D * g / NUMBER_OF_NEW_INDIVIDUALS) + "\t"
 						+ ga.getBestFitness());
 			}
 
@@ -63,14 +61,14 @@ public class Main {
 			ga.crossover();
 			ga.mutate();
 			// TODO Use pack2 for better or pack1 for faster packing.
+			// ga.pack1(X, Y);
 			ga.pack2(X, Y);
 			ga.evaluate();
 		}
 		System.out.println();
 
 		ga.findBestAndWorst();
-		Util.saveSolution("" + (new Date()).getTime() + ".bmp", ga.getBest(),
-				X, Y);
+		Util.saveSolution("" + (new Date()).getTime() + ".bmp", ga.getBest(), X, Y);
 		System.out.println(ga.getBestFitness());
 	}
 
@@ -88,21 +86,16 @@ public class Main {
 		Population optimized = initial;
 		System.err.println("Initial population evaluated ...");
 
-		GeneticAlgorithm algorithm = new GeneticAlgorithm(
-				new PieceOrderedCrossover(), Util.CROSSOVER_RATE,
-				new RandomPieceMutation(), Util.MUTATION_RATE,
-				new TournamentSelection(Util.TOURNAMENT_ARITY));
+		GeneticAlgorithm algorithm = new GeneticAlgorithm(new PieceOrderedCrossover(), Util.CROSSOVER_RATE,
+				new RandomPieceMutation(), Util.MUTATION_RATE, new TournamentSelection(Util.TOURNAMENT_ARITY));
 		System.err.println("Genetic algorithm crated ...");
-		optimized = algorithm.evolve(initial, new FixedElapsedTime(
-				Util.OPTIMIZATION_TIMEOUT_SECONDS));
+		optimized = algorithm.evolve(initial, new FixedElapsedTime(Util.OPTIMIZATION_TIMEOUT_SECONDS));
 		System.err.println("Optimization finished ...");
 
-		List<Piece> pieces = ((PieceListChromosome) optimized
-				.getFittestChromosome()).getPieces();
+		List<Piece> pieces = ((PieceListChromosome) optimized.getFittestChromosome()).getPieces();
 		Util.saveSolution(
-				"" + (new Date()).getTime() + "_"
-						+ (int) (optimized.getFittestChromosome().fitness())
-						+ ".bmp", pieces, X, Y);
+				"" + (new Date()).getTime() + "_" + (int) (optimized.getFittestChromosome().fitness()) + ".bmp", pieces,
+				X, Y);
 		System.err.println("Solution saved ...");
 	}
 
@@ -124,7 +117,7 @@ public class Main {
 		// TODO Do profiling to find the bottle necks in the code.
 		// TODO Write LSSC 2017 paper.
 
-		// optimization1(X, Y, pieces);
-		optimization2(X, Y, pieces);
+		optimization1(X, Y, pieces);
+		// optimization2(X, Y, pieces);
 	}
 }
