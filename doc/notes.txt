@@ -1,1 +1,3 @@
 - Да се използва външа библиотека за обработка на полигони (подобна на Tsusiat Software JTS, javaGeom, ).
+
+- За сглобяване на картина от множество други картини:   montage 1.bmp 2.bmp 3.bmp -tile 3x1 -geometry +50+0 result.bmp
